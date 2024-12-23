@@ -1,0 +1,209 @@
+#!/bin/sh
+
+CC=gcc
+if [ "" = "${CC}" ]
+then
+    CC=${CC}
+fi
+
+output="a.out"
+libdirs=""
+
+while getopts "D:o:" flag
+do
+    case $flag in
+        o) output="${OPTARG}";;
+        D) libdirs="$libdirs ${OPTARG}";;
+    esac
+done
+
+for main; do true; done # Get the last argument
+if [ ! "" = "${main}" ]; then output="${main%.*}"; fi
+
+#tmpdir="${HOME}/.cache/compile-r7rs/$(md5sum $main)/"
+tmpdir="${HOME}/.cache/compile-r7rs/test"
+
+case ${SCC} in
+    chibi-scheme)
+        paths="-I $tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths -I $tmpdir/${dir#./}"
+        done
+        scm_cmd="chibi-scheme $paths"
+        ;;
+    csi)
+        paths="-I $tmpdir/*"
+        for dir in $libdirs
+        do
+            paths="$paths -I $tmpdir/${dir#./}/*"
+        done
+        scm_cmd="csi -b -R r7rs $paths -script"
+        ;;
+    csc)
+        paths="-I $tmpdir"
+        objects=""
+        for dir in $libdirs
+        do
+            paths="$paths -I $tmpdir/${dir#./}"
+            for lib in $(find "$dir" -name "*.sld")
+            do
+                echo "Compiling $lib"
+                csc -X r7rs -R r7rs -c -J -unit ${lib%.sld} "$lib"
+                objects="$objects ${lib%.sld}.o"
+            done
+        done
+        csc -X r7rs -R r7rs -static $objects -o $output $main
+        chmod +x "$output"
+        exit 0
+        ;;
+    icyc)
+        paths="-I $tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths -I $tmpdir/${dir#./}"
+        done
+        scm_cmd="icyc $paths -s"
+        ;;
+    gsi)
+        paths="${tmpdir%/}/" # / is needed
+        for dir in $libdirs
+        do
+            paths="$paths $tmpdir/${dir#./}/" # / is needed
+        done
+        scm_cmd="gsi -:s $paths"
+        ;;
+    gosh)
+        paths="-I $tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths -I $tmpdir/${dir#./}"
+        done
+        scm_cmd="gosh -r7 $paths"
+        ;;
+    gxi) # FIXME
+        paths=""
+        for dir in $libdirs
+        do
+            paths="$paths :module $tmpdir/${dir#./}"
+        done
+        scm_cmd="gxi --lang r7rs"
+        ;;
+    gxc) # FIXME
+        echo "(prelude: :scheme/r7rs)" > gerbil.pkg
+        paths=""
+        libs=""
+        for dir in $libdirs
+        do
+            paths="$paths ${dir#./}"
+            for lib in $(find "$dir" -name "*.sld")
+            do
+                libs="$libs $lib"
+            done
+        done
+        gxc -o $output -static $libs $main
+        rm -rf gerbil.pkg
+        exit
+        ;;
+    guile)
+        paths="-L $tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths -L $tmpdir/${dir#./}"
+        done
+        scm_cmd="guile --r7rs $paths -s"
+        ;;
+    kawa)
+        jar xf kawa.jar
+        paths=""
+        for dir in $libdirs
+        do
+            paths="$paths $dir"
+            for lib in $(find "$dir" -name "*.sld")
+            do
+                kawa -C $lib
+            done
+        done
+        {
+            echo "Main-Class: main"
+            echo "Class-Path: . gnu kawa $paths"
+        } > /tmp/compile-r7rs-MANIFEST.mf
+        kawa --main -C $main
+        classfiles=$(find .- name "*.class")
+        jar cvfm "${output}.jar" /tmp/compile-r7rs-MANIFEST.mf kawa gnu $classfiles
+        rm -rf gnu kawa
+        rm -rf META-INF
+        exit
+        ;;
+    mosh)
+        paths="$tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths:$tmpdir/${dir#./}"
+        done
+        scm_cmd="mosh --loadpath=$paths"
+        ;;
+    sash)
+        paths="-L $tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths -L $tmpdir/${dir#./}"
+        done
+        scm_cmd="sash -r7 $paths"
+        ;;
+    stklos)
+        paths="-I $tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths -I $tmpdir/${dir#./}"
+        done
+        scm_cmd="stklos $paths"
+        ;;
+    skint)
+        paths="-I ${tmpdir%/}/"
+        for dir in $libdirs
+        do
+            dir1=${dir#./}
+            paths="$paths -I $tmpdir/${dir1%/}/" # / is needed
+        done
+        scm_cmd="skint $paths"
+        ;;
+    tr7i)
+        paths="$tmpdir"
+        for dir in $libdirs
+        do
+            paths="$paths:$tmpdir/${dir%./}/" # / is needed
+        done
+        scm_cmd="TR7_LIB_PATH=\"$paths:${TR7_LIB_PATH}\" tr7i"
+        ;;
+    ypsilon)
+        paths="${tmpdir}/"
+        for dir in $libdirs
+        do
+            paths="$paths:$tmpdir/${dir#./}"
+        done
+        scm_cmd="ypsilon --r7rs $paths --top-level-program"
+        ;;
+    *)
+        echo "Unsupported SCC (SCheme Compiler) implementation or environment value not set."
+        exit 1
+esac
+
+command="$scm_cmd $tmpdir/$main"
+rm -rf "$output"
+{
+    echo "#!/bin/sh"
+    echo "mkdir -p $tmpdir"
+    echo 'CURDIR=${PWD}'
+    echo "cd $tmpdir"
+    echo "{"
+    shar -M --quiet-unshar --no-check-existing --no-timestamp $main $libdirs | grep -v "exit 0"
+    echo "} > /dev/null"
+    echo 'cd ${CURDIR}'
+    echo "$command"
+} > "$output"
+
+chmod +x "$output"
+echo "Command: $command"
+
+
