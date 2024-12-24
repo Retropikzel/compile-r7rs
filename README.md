@@ -66,4 +66,4 @@ Only requires Java to be installed to run.
 
 The scripts searches for .sld files in given paths, compiles them if needed and combines them with
 the main script to form something that can be run on it's own. Meaning that the only thing the
-person running the things needs, might be, the Scheme implementation.
+person running the things needs, might be, the Scheme implementation, Java, or nothing.
