@@ -36,6 +36,8 @@ The environment variable SCC must be set to the same value as the implementation
 The command is the first word on the list.  So for example guile for Guile, csi for Chicken
 interpreter, csc for Chicken compiler.
 
+If the command has .exe at it's end cross compilation from Linux to .exe with Wine is assumed.
+
 ## Outputs
 
 ### Self contained, self extracting and runnable shell script
@@ -68,6 +70,10 @@ Only requires Java to be installed to run.
 
 - kawa
     - The build folder needs to contain kawa.jar
+
+### .exe
+
+- racket.exe
 
 ## How it works
 
