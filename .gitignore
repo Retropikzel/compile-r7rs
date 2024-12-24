@@ -3,3 +3,5 @@
 *.o
 *.so
 META-INF
+*.rkt
+test/main

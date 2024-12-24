@@ -143,6 +143,28 @@ case ${SCC} in
         done
         scm_cmd="mosh --loadpath=$paths"
         ;;
+    racket)
+        paths=""
+        for dir in $libdirs
+        do
+            paths="${PWD}/${dir#./}:$paths"
+            for lib in $(find "$dir" -name "*.sld")
+            do
+                {
+                    echo "#lang r7rs"
+                    echo "(import (scheme base))"
+                    echo "(include \"$(basename $lib)\")"
+                } > "${lib%.sld}.rkt"
+            done
+        done
+
+        {
+            echo "#lang r7rs"
+            cat "$main"
+        } > "${main%.scm}.rkt"
+        PLTCOLLECTS="$paths" raco exe --orig-exe -o $output ++lang r7rs "${main%.scm}.rkt"
+        exit
+        ;;
     sash)
         paths="-L $tmpdir"
         for dir in $libdirs

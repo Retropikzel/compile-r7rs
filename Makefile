@@ -7,12 +7,13 @@ install:
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
 run-test:
-	@cd test && ../compile-r7rs -D ./libs -D ./libs2 main.scm
+	@cd test && ../compile-r7rs -D . -D ./libs -D ./libs2 main.scm
 
 clean:
 	find . -name "*.c*" -delete
 	find . -name "*.o*" -delete
 	find . -name "*.so*" -delete
+	find . -name "*.rkt*" -delete
 	find . -name "*.import.scm" -delete
 	find . -name "*.link" -delete
 	find . -name "*.class" -delete

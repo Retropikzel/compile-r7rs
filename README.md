@@ -55,7 +55,6 @@ Requires nothing to be installed to run.
 - csc (Chicken)
 - racket (Racket)
 
-
 ### Java ARchive (JAR)
 
 Only requires Java to be installed to run.
