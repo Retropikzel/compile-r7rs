@@ -1,4 +1,5 @@
-Non implementation specific implementation of [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
+Non Scheme implementation specific implementation of
+[SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 
 ## Dependencies
 
@@ -16,12 +17,18 @@ For jar:
 
 ## Installing
 
-- Download the scman script 
+- Download the scman script
 - Place it in ${HOME}/.local/bin
 - Add ${HOME}/.local/bin to the PATH
     - For example add to your .bashrc: export PATH="${HOME}/.local/bin:${PATH}"
 - Make the script runnable
     - chmod -x ${HOME}/.local/bin/scman
+
+You can also run it in place with
+
+    ./scman ...
+
+but the ${HOME}/.local/bin needs to be in your path for you to be able to run the implementations.
 
 ## Usage
 
