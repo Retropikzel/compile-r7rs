@@ -1,3 +1,5 @@
+.PHONY: test
+
 PREFIX=/usr/local
 build:
 	@echo "No need to build, just run make install"
@@ -6,7 +8,7 @@ install:
 	mkdir -p ${PREFIX}/bin
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
-run-test:
+test:
 	@cd test && ../compile-r7rs -D . -D ./libs -D ./libs2 main.scm
 
 clean:
