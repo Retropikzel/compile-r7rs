@@ -32,11 +32,16 @@ but the ${HOME}/.local/bin needs to be in your path for you to be able to run th
 
 ## Usage
 
-The environment variable SCC must be set to the same value as the implementations command.
+The environment variable SCMC must be set to the same value as the implementations command.
 The command is the first word on the list.  So for example guile for Guile, csi for Chicken
 interpreter, csc for Chicken compiler.
 
 If the command has .exe at it's end cross compilation from Linux to .exe with Wine is assumed.
+
+
+Run
+
+    SCMC=<SCHEME> compile-r7rs -I <DIR> <file.scm>
 
 ## Outputs
 

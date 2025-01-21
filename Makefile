@@ -9,7 +9,7 @@ install:
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
 test:
-	@cd test && ../compile-r7rs -D . -D ./libs -D ./libs2 main.scm
+	@cd test && ../compile-r7rs -I . -I ./libs -I ./libs2 main.scm
 
 clean:
 	find . -name "*.c*" -delete
