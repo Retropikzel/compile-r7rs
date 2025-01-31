@@ -63,7 +63,7 @@ case "${SCMC}" in
                 objects="$objects ${lib%.sld}.o"
             done
         done
-        csc -X r7rs -R r7rs -cc ${CC} ${CSCFLAGS}  -o $output -static -uses ${units} $main
+        csc -X r7rs -R r7rs -cc ${CC} ${CSCFLAGS} -static -uses ${units} ${main}
         chmod +x "$output"
         exit 0
         ;;
