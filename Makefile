@@ -8,6 +8,9 @@ install:
 	mkdir -p ${PREFIX}/bin
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
+shellcheck:
+	shellcheck compile-r7rs
+
 test:
 	@cd test && ../compile-r7rs -I . -I ./libs -I ./libs2 main.scm
 

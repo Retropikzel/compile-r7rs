@@ -1,11 +1,10 @@
 #!/bin/sh
 
-if [ ! "${COMPILE_R7RS_DEBUG}" = "" ]; then set -x; fi
+if [ ! "$COMPILE_R7RS_DEBUG" = "" ]; then set -x; fi
 
-CC=gcc
-if [ "" = "${CC}" ]
+if [ "$CC" = "" ]
 then
-    CC=${CC}
+    CC=gcc
 fi
 
 output="a.out"
@@ -13,22 +12,23 @@ libdirs=""
 
 while getopts "I:A:o:" flag
 do
-    case $flag in
-        o) output="${OPTARG}";;
-        A) libdirs="$libdirs ${OPTARG}";;
-        I) libdirs="${OPTARG} $libdirs";;
+    case "$flag" in
+        o) output="$OPTARG";;
+        A) libdirs="$libdirs $OPTARG";;
+        I) libdirs="$OPTARG $libdirs";;
+        *) echo "Invalid flag: $flag" && exit 1
     esac
 done
 
 for main; do true; done # Get the last argument
-if [ ! "" = "${main}" ]; then output="${main%.*}"; fi
+if [ ! "" = "$main" ]; then output="${main%.*}"; fi
 
-#tmpdir="${HOME}/.cache/compile-r7rs/$(md5sum $main)/"
-tmpdir="${HOME}/.cache/compile-r7rs/test"
+#tmpdir="$HOME/.cache/compile-r7rs/$(md5sum $main)/"
+tmpdir="$HOME/.cache/compile-r7rs/test"
 
-if [ ! "${COMPILE_R7RS_DEBUG}" = "" ]; then echo "SCMC: ${SCMC}"; fi
+if [ ! "$COMPILE_R7RS_DEBUG" = "" ]; then echo "SCMC: $SCMC"; fi
 
-case "${SCMC}" in
+case "$SCMC" in
     chibi-scheme)
         paths="-I $tmpdir"
         for dir in $libdirs
@@ -53,20 +53,24 @@ case "${SCMC}" in
         for dir in $libdirs
         do
             paths="$paths -I $tmpdir/${dir#./}"
-            for lib in $(find "${dir}" -name "*.sld")
+            for lib in **/*.sld #$(find "${dir}" -name "*.sld")
             do
-                unit0=$(cd "${dir}" && find . -name $(basename "${lib}"))
+                unit0=$(cd "$dir" && find . -name "$(basename "$lib")")
                 unit1=$(echo "${unit0#\./}" | sed 's/\//\./g')
                 unit=${unit1%.sld}
-                echo "Compiling $lib as unit ${unit}"
-                csc -X r7rs -R r7rs -cc ${CC} ${CSCFLAGS} -c -J -unit ${unit} -uses "${units}" "$lib" -o "${unit}.o"
-                units="${units},${unit}"
+                echo "Compiling $lib as unit $unit"
+                # CSC_FLAGS need to expand with spaces
+                # shellcheck disable=SC2086
+                csc -X r7rs -R r7rs -cc "$CC" $CSC_FLAGS -c -J -unit "$unit" -uses "$units" "${lib}" -o "$unit.o"
+                units="$units,$unit"
                 objects="$objects ${lib%.sld}.o"
             done
         done
         output="${main%.scm}"
-        csc -X r7rs -R r7rs -cc ${CC} ${CSCFLAGS} -static -o "${output}" -uses ${units} ${main}
-        test -f "${output}" && chmod +x "${output}"
+        # CSC_FLAGS need to expand with spaces
+        # shellcheck disable=SC2086
+        csc -X r7rs -R r7rs -cc "$CC" $CSC_FLAGS -static -o "$output" -uses "$units" "$main"
+        test -f "$output" && chmod +x "$output"
         exit 0
         ;;
     icyc)
@@ -108,12 +112,12 @@ case "${SCMC}" in
         for dir in $libdirs
         do
             paths="$paths ${dir#./}"
-            for lib in $(find "$dir" -name "*.sld")
+            for lib in **/*.sld #$(find "${dir}" -name "*.sld")
             do
                 libs="$libs $lib"
             done
         done
-        gxc -o $output -static $libs $main
+        gxc -o "$output" -static "$libs" "$main"
         rm -rf gerbil.pkg
         exit
         ;;
@@ -131,18 +135,18 @@ case "${SCMC}" in
         for dir in $libdirs
         do
             paths="$paths $dir"
-            for lib in $(find "$dir" -name "*.sld")
+            for lib in **/*.sld #$(find "$dir" -name "*.sld")
             do
-                kawa -C $lib
+                kawa -C "$lib"
             done
         done
         {
             echo "Main-Class: main"
             echo "Class-Path: . gnu kawa $paths"
         } > /tmp/compile-r7rs-MANIFEST.mf
-        kawa --main -C $main
+        kawa --main -C "$main"
         classfiles=$(find .- name "*.class")
-        jar cvfm "${output}.jar" /tmp/compile-r7rs-MANIFEST.mf kawa gnu $classfiles
+        jar cvfm "$output.jar" /tmp/compile-r7rs-MANIFEST.mf kawa gnu "$classfiles"
         rm -rf gnu kawa
         rm -rf META-INF
         exit
@@ -159,13 +163,13 @@ case "${SCMC}" in
         paths=""
         for dir in $libdirs
         do
-            paths="${PWD}/${dir#./}:$paths"
-            for lib in $(find "$dir" -name "*.sld")
+            paths="$PWD/${dir#./}:$paths"
+            for lib in **/*.sld #$(find "$dir" -name "*.sld")
             do
                 {
                     echo "#lang r7rs"
                     echo "(import (scheme base))"
-                    echo "(include \"$(basename $lib)\")"
+                    echo "(include \"$(basename "$lib")\")"
                 } > "${lib%.sld}.rkt"
             done
         done
@@ -174,20 +178,20 @@ case "${SCMC}" in
             echo "#lang r7rs"
             cat "$main"
         } > "${main%.scm}.rkt"
-        PLTCOLLECTS="$paths" raco exe --orig-exe -o $output ++lang r7rs "${main%.scm}.rkt"
+        PLTCOLLECTS="$paths" raco exe --orig-exe -o "$output" ++lang r7rs "${main%.scm}.rkt"
         exit
         ;;
     racket.exe)
-        paths="${PWD}"
+        paths="$PWD"
         for dir in $libdirs
         do
-            paths="$paths;$(winepath ${PWD}/${dir#./})"
-            for lib in $(find "$dir" -name "*.sld")
+            paths="$paths;$(winepath "$PWD"/"${dir#./}")"
+            for lib in **/*.sld #$(find "$dir" -name "*.sld")
             do
                 {
                     echo "#lang r7rs"
                     echo "(import (scheme base))"
-                    echo "(include \"$(basename $lib)\")"
+                    echo "(include \"$(basename "$lib")\")"
                 } > "${lib%.sld}.rkt"
             done
         done
@@ -197,9 +201,9 @@ case "${SCMC}" in
             cat "$main"
         } > "${main%.scm}.rkt"
         set -x
-        WINEPATH="${HOME}/.wine/drive_c/Program Files/Racket" \
+        WINEPATH="$HOME/.wine/drive_c/Program Files/Racket" \
         PLTCOLLECTS="$paths" \
-            wine raco.exe exe --orig-exe --embed-dlls -o "${output}.exe" ++lang r7rs "${main%.scm}.rkt"
+            wine raco.exe exe --orig-exe --embed-dlls -o "$output.exe" ++lang r7rs "${main%.scm}.rkt"
         exit
         ;;
     sash)
@@ -233,10 +237,10 @@ case "${SCMC}" in
         do
             paths="$paths:$tmpdir/${dir%./}/" # / is needed
         done
-        scm_cmd="TR7_LIB_PATH=\"$paths:${TR7_LIB_PATH}\" tr7i"
+        scm_cmd="TR7_LIB_PATH=\"$paths:$TR7_LIB_PATH\" tr7i"
         ;;
     ypsilon)
-        paths="${tmpdir}/"
+        paths="$tmpdir/"
         for dir in $libdirs
         do
             paths="$paths:$tmpdir/${dir#./}"
@@ -253,12 +257,12 @@ rm -rf "$output"
 {
     echo "#!/bin/sh"
     echo "mkdir -p $tmpdir"
-    echo 'CURDIR=${PWD}'
+    echo "CURDIR=\$PWD"
     echo "cd $tmpdir"
     echo "{"
-    shar -M --quiet-unshar --no-check-existing --no-timestamp $main $(find $libdirs -name "*.scm" -o -name "*.sld" -o -name "*.rkt") | grep -v "exit 0"
+    shar -M --quiet-unshar --no-check-existing --no-timestamp "$main" "$(find "$libdirs" -name "*.scm" -o -name "*.sld" -o -name "*.rkt")" | grep -v "exit 0"
     echo "} > /dev/null"
-    echo 'cd ${CURDIR}'
+    echo "cd \$CURDIR"
     echo "$command \"\$@\""
 } > "$output"
 
