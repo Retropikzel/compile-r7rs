@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 if [ ! "$COMPILE_R7RS_DEBUG" = "" ]; then set -x; fi
 
 if [ "$CC" = "" ]
@@ -46,7 +47,11 @@ case "$SCMC" in
         scm_cmd="csi -b -R r7rs $paths -script"
         ;;
     csc)
-        set -x
+        if [ "$CSC_FLAGS" = "" ]
+        then
+            CSC_FLAGS=""
+        fi
+        set -eu
         paths="-I $tmpdir"
         objects=""
         units="r7rs,scheme.base,scheme.case-lambda,scheme.char,scheme.complex,scheme.cxr,scheme.eval,scheme.file,scheme.inexact,scheme.lazy,scheme.load,scheme.process-context,scheme.read,scheme.repl,scheme.time,scheme.write,scheme.r5rs"
@@ -54,7 +59,7 @@ case "$SCMC" in
         do
             paths="$paths -I $tmpdir/${dir#./}"
             findtmp="$(mktemp)"
-            find "$dir" -name '*.sld' > "$findtmp"
+            find "$dir" ! -name "$(printf "*\n*")" -name '*.sld' > "$findtmp"
             while IFS= read -r lib
             do
                 unit0=$(cd "$dir" && find . -name "$(basename "$lib")")
@@ -115,7 +120,7 @@ case "$SCMC" in
         do
             paths="$paths ${dir#./}"
             findtmp="$(mktemp)"
-            find "$dir" -name '*.sld' > "$findtmp"
+            find "$dir" ! -name "$(printf "*\n*")" -name '*.sld' > "$findtmp"
             while IFS= read -r lib
             do
                 libs="$libs $lib"
@@ -140,7 +145,7 @@ case "$SCMC" in
         do
             paths="$paths $dir"
             findtmp="$(mktemp)"
-            find "$dir" -name '*.sld' > "$findtmp"
+            find "$dir" ! -name "$(printf "*\n*")" -name '*.sld' > "$findtmp"
             while IFS= read -r lib
             do
                 kawa -C "$lib"
@@ -171,7 +176,7 @@ case "$SCMC" in
         do
             paths="$PWD/${dir#./}:$paths"
             findtmp="$(mktemp)"
-            find "$dir" -name '*.sld' > "$findtmp"
+            find "$dir" ! -name "$(printf "*\n*")" -name '*.sld' > "$findtmp"
             while IFS= read -r lib
             do
                 {
@@ -190,12 +195,13 @@ case "$SCMC" in
         exit
         ;;
     racket.exe)
-        paths="$PWD"
+        set -x
+        paths="$(winepath --windows $PWD)"
         for dir in $libdirs
         do
-            paths="$paths;$(winepath "$PWD"/"${dir#./}")"
+            paths="$paths;$(winepath --windows "$PWD"/"${dir#./}" | sed 's/\//\\/')"
             findtmp="$(mktemp)"
-            find "$dir" -name '*.sld' > "$findtmp"
+            find "$dir" ! -name "$(printf "*\n*")" -name '*.sld' > "$findtmp"
             while IFS= read -r lib
             do
                 {

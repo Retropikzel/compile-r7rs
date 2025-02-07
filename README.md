@@ -21,16 +21,26 @@ For jar:
 
 ## Usage
 
-The environment variable SCMC must be set to the same value as the implementations command.
-The command is the first word on the list.  So for example guile for Guile, csi for Chicken
-interpreter, csc for Chicken compiler.
+The environment variable SCMC must be set to the same value as the
+implementations command.  The command is the first word on the list.
+So for example guile for Guile, csi for Chicken interpreter, csc for Chicken
+compiler.
 
-If the command has .exe at it's end cross compilation from Linux to .exe with Wine is assumed.
+If the command has .exe at it's end cross compilation from Linux to .exe with
+Wine is assumed.
 
 
 Run
 
     SCMC=<SCHEME> compile-r7rs -I <DIR> <file.scm>
+
+So for example to build hello-world.scm with Racket for both Linux and Wine run:
+
+    SCMC=racket compile-r7rs -I ./snow hello-world.scm
+    SCMC=racket.exe compile-r7rs -I ./snow hello-world.scm
+
+Libraries in these commands are assumed to be under snow directory, so library
+(foo bar) would be in snow/foo/bar.sld.
 
 ## Outputs
 
@@ -53,7 +63,7 @@ Requires the Scheme implementation to be installed to run.
 
 ### Static binary executable
 
-Requires nothing to be installed to run.
+Does not require Scheme implementation to be installed to run.
 
 - csc (Chicken)
 - racket (Racket)
@@ -68,6 +78,7 @@ Only requires Java to be installed to run.
 ### .exe
 
 - racket.exe
+    - Install Racket and r7rs library with Wine to default locations
 
 ## How it works
 
