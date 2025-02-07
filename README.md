@@ -1,5 +1,5 @@
-Non Scheme implementation specific implementation of
-[SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
+compile-r7rs is a tool to compile R7RS Scheme programs, it aims for compability
+with [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 
 ## Dependencies
 
