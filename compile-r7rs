@@ -195,11 +195,10 @@ case "$SCMC" in
         exit
         ;;
     racket.exe)
-        set -x
-        paths="$(winepath --windows $PWD)"
+        paths="$(winepath --windows $PWD);$(winepath --windows $HOME/.wine/drive_c/Program\ Files/Racket/collects)"
         for dir in $libdirs
         do
-            paths="$paths;$(winepath --windows "$PWD"/"${dir#./}" | sed 's/\//\\/')"
+            paths="$paths;$(winepath --windows "$PWD"/"${dir#./}")"
             findtmp="$(mktemp)"
             find "$dir" ! -name "$(printf "*\n*")" -name '*.sld' > "$findtmp"
             while IFS= read -r lib
