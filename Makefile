@@ -1,4 +1,4 @@
-.PHONY: test
+.PHONY: snow
 PREFIX=/usr/local
 CC=gcc
 CHICKEN_FLAGS=-optimize-level 3
@@ -14,12 +14,19 @@ build:
 		-Ichicken/include
 
 test-sagittarius:
-	cd test && sash -r7 -L ${PWD}/snow ../compile-r7rs.scm
+	cd test && sash -r7 -L ${PWD}/snow ../compile-r7rs.scm -I ./libs
+	cd test && sash -r7 -L ${PWD}/snow ../compile-r7rs.scm -I ./libs foo.scm
+	chmod +x test/foo
+	cd test && ./foo
 
-test-racket:
-	cd test && racket -I r7rs -S ${PWD}/snow --script ../compile-r7rs.scm
+test-guile:
+	cd test && guile --r7rs -L ${PWD}/snow ../compile-r7rs.scm -I ./libs
+	cd test && guile --r7rs -L ${PWD}/snow ../compile-r7rs.scm -I ./libs foo.scm
+	chmod +x test/foo
+	cd test && ./foo
 
-build-snow:
+
+snow:
 	rm -rf snow
 	mkdir -p snow
 	cp -r ../r7rs-pffi/retropikzel snow/
@@ -43,4 +50,10 @@ install:
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
 clean:
-	rm -rf src
+	rm -rf test/foo
+	rm -rf test/libs/bar/baz
+	find . -name "*.so" -delete
+	find . -name "*.o" -delete
+	find . -name "*.link" -delete
+	find . -name "*.meta" -delete
+	find . -name "*.import.*" -delete

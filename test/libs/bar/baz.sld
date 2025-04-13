@@ -4,4 +4,7 @@
           (scheme write))
   (export hello)
   (begin
-    (define hello (lambda () (display "Hello") (newline)))))
+    (define hello
+      (lambda ()
+        (display "Hello")
+        (newline)))))

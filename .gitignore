@@ -1,3 +1,11 @@
 *.swp
 *.link
 compile-r7rs
+test/foo
+test/libs/bar/baz
+*.c
+*.o
+*.so
+!chicken
+!src
+

@@ -1,87 +1,47 @@
 compile-r7rs is a tool to compile R7RS Scheme programs, it aims for compability
 with [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 
+## Supported implementations
+
+- chibi
+- cyclone
+- gauche
+- guile
+- kawa
+- mosh
+- sagittarius
+- skint
+- stklos
+- tr7
+- ypsilon
+
 ## Dependencies
 
-For scripts:
+C toolchain and libuv, on Debian/Ubuntu/Mint run
 
-    apt install sharutils
+    apt install build-essential libuv1-dev
 
-For binaries:
+You need to install each Scheme implementation yourself.
 
-    apt install build-essential
+## Build and install
 
-For jar:
-
-    apt install default-jdk
-
-## Installing
-
-    make install
+    ./configure
+    make
+    install
 
 ## Usage
 
-The environment variable SCMC must be set to the same value as the
-implementations command.  The command is the first word on the list.
-So for example guile for Guile, csi for Chicken interpreter, csc for Chicken
-compiler.
+The environment variable SCHEME must be set to the name of the implementation
+as specified in the support list.
 
-If the command has .exe at it's end cross compilation from Linux to .exe with
-Wine is assumed.
+First to compile your libraries run the command without the .scm file.
 
+    SCHEME=<implementation name> compile-r7rs -I .
 
-Run
+Then run it with the .scm file.
 
-    SCMC=<SCHEME> compile-r7rs -I <DIR> <file.scm>
+    SCHEME=<implementation name> compile-r7rs -I . main.scm
 
-So for example to build hello-world.scm with Racket for both Linux and Wine run:
-
-    SCMC=racket compile-r7rs -I ./snow hello-world.scm
-    SCMC=racket.exe compile-r7rs -I ./snow hello-world.scm
-
-Libraries in these commands are assumed to be under snow directory, so library
-(foo bar) would be in snow/foo/bar.sld.
-
-## Outputs
-
-### Self contained, self extracting and runnable shell script
-
-Requires the Scheme implementation to be installed to run.
-
-- chibi-scheme
-- csi (Chicken)
-- icyc (Cyclone)
-- gsi (Gambit)
-- gosh (Gauche)
-- guile
-- mosh
-- sash
-- stklos
-- skint
-- tr7i (tr7)
-- ypsilon
-
-### Static binary executable
-
-Does not require Scheme implementation to be installed to run.
-
-- csc (Chicken)
-- racket (Racket)
-
-### Java ARchive (JAR)
-
-Only requires Java to be installed to run.
-
-- kawa
-    - The build folder needs to contain kawa.jar
-
-### .exe
-
-- racket.exe
-    - Install Racket and r7rs library with Wine to default locations
-
-## How it works
-
-The scripts searches for .sld files in given paths, compiles them if needed and combines them with
-the main script to form something that can be run on it's own. Meaning that the only thing the
-person running the things needs, might be, the Scheme implementation, Java, or nothing.
+Which produces file called main, which you can run. Note that when given Scheme
+is interpreter the file contains commands that run the script, and even when
+the file is combiled binary it might need the compiled libraries.
