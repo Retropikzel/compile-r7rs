@@ -53,7 +53,9 @@ clean:
 	rm -rf test/foo
 	rm -rf test/libs/bar/baz
 	find . -name "*.so" -delete
-	find . -name "*.o" -delete
+	find . -name "*.o*" -delete
+	find . -name "*.rkt" -delete
+	find ./test -name "*.c" -delete
 	find . -name "*.link" -delete
 	find . -name "*.meta" -delete
 	find . -name "*.import.*" -delete

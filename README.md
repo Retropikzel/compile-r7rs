@@ -8,6 +8,7 @@ with [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 - gauche
 - guile
 - kawa
+- loko
 - mosh
 - sagittarius
 - skint

@@ -5,7 +5,9 @@ test/foo
 test/libs/bar/baz
 *.c
 *.o
+*.o*
 *.so
 !chicken
 !src
+*.rkt
 

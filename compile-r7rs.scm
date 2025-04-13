@@ -70,20 +70,6 @@
 
 (pffi-define c-system c-libstd 'system 'int '(pointer))
 
-(define scheme-type (cdr (assoc 'type (cdr (assoc scheme data)))))
-
-(define scheme-command
-  (apply (cdr (assoc 'command (cdr (assoc scheme data))))
-         (list (if input-file input-file "")
-               (if output-file output-file "")
-               prepend-directories
-               append-directories)))
-
-(define scheme-library-command
-  (lambda (library-file)
-    (apply (cdr (assoc 'library-command (cdr (assoc scheme data))))
-      (list library-file prepend-directories append-directories))))
-
 (define search-library-files
   (lambda (directory)
     (let ((result (list)))
@@ -98,6 +84,29 @@
         (directory-files directory))
       result)))
 
+(define library-files
+  (apply append
+         (map
+           (lambda (directory)
+             (search-library-files directory))
+           (append prepend-directories append-directories))))
+
+(define scheme-type (cdr (assoc 'type (cdr (assoc scheme data)))))
+
+(define scheme-command
+  (apply (cdr (assoc 'command (cdr (assoc scheme data))))
+         (list (if input-file input-file "")
+               (if output-file output-file "")
+               prepend-directories
+               append-directories
+               library-files)))
+
+(define scheme-library-command
+  (lambda (library-file)
+    (apply (cdr (assoc 'library-command (cdr (assoc scheme data))))
+      (list library-file prepend-directories append-directories))))
+
+
 (define list-of-features
   (letrec ((looper (lambda (rest result)
                      (if (null? rest)
@@ -109,19 +118,19 @@
                                  result))))))
     (looper (command-line) (list))))
 
-(display "Scheme          ")
+(display "Scheme            ")
 (display scheme)
 (newline)
-(display "Type            ")
+(display "Type              ")
 (display scheme-type)
 (newline)
-(display "Command         ")
+(display "Command           ")
 (display scheme-command)
 (newline)
-(display "Input file      ")
+(display "Input file        ")
 (display input-file)
 (newline)
-(display "Output file     ")
+(display "Output file       ")
 (display output-file)
 (newline)
 
@@ -145,10 +154,10 @@
 
 (when (and (equal? scheme-type 'compiler) input-file)
   (when (file-exists? output-file) (delete-file output-file))
-  (display "Compiling file ")
+  (display "Compiling file    ")
   (display input-file)
   (newline)
-  (display "With command   ")
+  (display "With command      ")
   (display scheme-command)
   (newline)
   (c-system (pffi-string->pointer scheme-command)))
@@ -157,9 +166,7 @@
 (cond ((and (not input-file) (assoc 'library-command (cdr (assoc scheme data))))
        (when (and output-file (file-exists? output-file))
          (delete-file output-file))
-       (for-each
-         (lambda (directory)
-           (for-each
+      (for-each
              (lambda (file)
                (let* ((command (scheme-library-command file)))
                  (display "Compiling library ")
@@ -169,8 +176,7 @@
                  (display command)
                  (newline)
                  (c-system (pffi-string->pointer command))))
-             (search-library-files directory)))
-         (append prepend-directories append-directories)))
+             library-files))
       ((not input-file)
        (display "Library compilation requested but no library command found. ")
        (display "Skipping...")
