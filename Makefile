@@ -2,7 +2,7 @@
 PREFIX=/usr/local
 
 build:
-	printf "#!/bin/sh\nash -r7 -L ${PREFIX}/lib/compile-r7rs/snow ${PREFIX}/lib/compile-r7rs/main.scm \"\$$@\"\n" > compile-r7rs
+	printf "#!/bin/sh\nsash -r7 -L ${PREFIX}/lib/compile-r7rs/snow ${PREFIX}/lib/compile-r7rs/main.scm \"\$$@\"\n" > compile-r7rs
 
 snow:
 	rm -rf snow

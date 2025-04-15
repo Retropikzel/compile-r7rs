@@ -16,7 +16,7 @@
     '(chibi
        cyclone
        gauche
-       guile
+       ;guile
        kawa
        loko
        mosh
