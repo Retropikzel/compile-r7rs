@@ -64,6 +64,7 @@ dll is included, no need to install anything.
 
 ### Build on Windows
 
+Work in progress
 In command prompt run:
 
     build.bat

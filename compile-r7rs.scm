@@ -80,13 +80,13 @@
     (looper (command-line) (list))))
 
 (cond-expand
-  (windows (pffi-define-library c-libstd '("libstd.h") "ucrtbase"))
-  (else (pffi-define-library c-libstd
-                             '("libstd.h")
+  (windows (pffi-define-library c-stdlib '("stdlib.h") "ucrtbase"))
+  (else (pffi-define-library c-stdlib
+                             '("stdlib.h")
                              "c"
                              '((additional-versions ("6"))))))
 
-(pffi-define c-system c-libstd 'system 'int '(pointer))
+(pffi-define c-system c-stdlib 'system 'int '(pointer))
 
 (define search-library-files
   (lambda (directory)

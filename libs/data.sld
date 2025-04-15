@@ -1,6 +1,10 @@
 (define-library
   (libs data)
-  (import (scheme base))
+  (import (scheme base)
+          (scheme write)
+          (scheme file)
+          (libs util)
+          (srfi 170))
   (export data)
   (begin
     (define data
