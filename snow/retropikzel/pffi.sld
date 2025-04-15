@@ -59,7 +59,8 @@
               (scheme process-context)
               (rnrs bytevectors)
               (system foreign)
-              (system foreign-library)))
+              (system foreign-library)
+              (only (guile) include-from-path)))
     (kawa
       (import (scheme base)
               (scheme write)
@@ -133,8 +134,7 @@
               (scheme process-context)
               (ypsilon c-ffi)
               (ypsilon c-types)
-              (only (core) define-macro syntax-case)))
-    (else (error "Unsupported implementation")))
+              (only (core) define-macro syntax-case))))
   (export pffi-init
           pffi-size-of
           pffi-type?

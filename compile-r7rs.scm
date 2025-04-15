@@ -4,10 +4,28 @@
         (scheme write)
         (scheme process-context)
         (retropikzel pffi)
+        (libs util)
+        (libs data)
         (srfi 170))
 
-(include "src/util.scm")
-(include "src/data.scm")
+(when (member "--list-schemes" (command-line))
+  (for-each
+    (lambda (scheme)
+      (display scheme)
+      (newline))
+    '(chibi
+       cyclone
+       gauche
+       guile
+       kawa
+       loko
+       mosh
+       sagittarius
+       skint
+       stklos
+       tr7
+       ypsilon))
+  (exit 0))
 
 (define scheme (if (get-environment-variable "SCHEME")
                   (string->symbol (get-environment-variable "SCHEME"))
@@ -88,7 +106,9 @@
   (apply append
          (map
            (lambda (directory)
-             (search-library-files directory))
+             (if (file-exists? directory)
+               (search-library-files directory)
+               (list)))
            (append prepend-directories append-directories))))
 
 (define scheme-type (cdr (assoc 'type (cdr (assoc scheme data)))))

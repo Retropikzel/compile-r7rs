@@ -18,19 +18,60 @@ with [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 
 ## Dependencies
 
-C toolchain and libuv, on Debian/Ubuntu/Mint run
 
-    apt install build-essential libuv1-dev
 
-You need to install each Scheme implementation yourself.
+## Getting started
 
-## Build and install
+### Install Sagittarius scheme
+
+#### Linux
+
+On Debian/Ubuntu/Mint:
+
+    apt-get install -y build-essential cmake libgc-dev zlib1g-dev libffi-dev libssl-dev
+    wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz
+    tar -xf sagittarius-0.9.12.tar.gz
+    cd sagittarius-0.9.12.tar.gz
+    mkdir build
+    cd build
+    cmake ..
+    make
+    make install
+
+#### Windows
+
+Download the installer from
+[https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/](https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/)
+and install it.
+
+### Install libuv
+
+#### Linux
+
+On Debian/Ubuntu/Mint run:
+
+    apt install libuv1
+
+#### Windows
+
+dll is included, no need to install anything.
+
+### Build on Linux
 
     ./configure
     make
-    install
+    make install
+
+### Build on Windows
+
+In command prompt run:
+
+    build.bat
+    install.bat
 
 ## Usage
+
+You need to install each Scheme implementation yourself.
 
 The environment variable SCHEME must be set to the name of the implementation
 as specified in the support list.
