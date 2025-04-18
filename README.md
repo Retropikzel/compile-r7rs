@@ -49,7 +49,7 @@ as compiler.
 - cyclone
     - compiler
     - r7rs
-- Gambit
+- gambit
     - compiler
     - r7rs
 - foment
