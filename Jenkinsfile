@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile.jenkins'
-            args '--privileged'
-        }
-    }
+    agent any
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
     }
@@ -16,6 +11,7 @@ pipeline {
                   }
             }
             steps {
+                sh 'apt-get update && apt-get install -y make'
                 sh 'make'
                 sh 'make install'
                 sh 'make SCHEME=sagittarius test-r6rs'
@@ -25,6 +21,7 @@ pipeline {
         stage("Test chez r6rs") {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'apt-get update && apt-get install -y make'
                     sh 'make SCHEME=chibi test-r6rs-docker'
                 }
             }
