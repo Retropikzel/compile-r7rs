@@ -20,7 +20,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
-                    sh 'make COMPILE_R7RS=chibi test-r6rs'
+                    sh 'make COMPILE_R7RS=chezscheme test-r6rs'
                 }
             }
         }
