@@ -5,11 +5,7 @@ pipeline {
     }
     stages {
         stage("Build") {
-            agent {
-                  docker {
-                      image 'schemers/sagittarius'
-                  }
-            }
+            agent { docker { image 'schemers/sagittarius' } }
             steps {
                 sh 'apt-get update && apt-get install -y make'
                 sh 'make'
