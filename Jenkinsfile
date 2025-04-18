@@ -14,7 +14,7 @@ pipeline {
             }
         }
         stage("Test chez r6rs") {
-            agent { dockerfile { filename 'Dockerfile'; args '--user=root'; additionalBuildArgs '--build-arg COMPILE_R7RS=chezsceme' } }
+            agent { dockerfile { filename 'Dockerfile'; args '--user=root'; additionalBuildArgs '--build-arg COMPILE_R7RS=chezscheme' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'make && make install'
