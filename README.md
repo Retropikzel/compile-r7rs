@@ -202,9 +202,9 @@ installer.iss, it is made with innosetup.
 
 You need to install each Scheme implementation yourself.
 
-The environment variable COMPILE\_R7RS must be set to the name of the
+The environment variable COMPILE\_R7RS must be set to the **name** of the
 implementation as specified in the support list.
-**This differs from the SRFI** as it excepts a path.
+**This differs from the SRFI** as the SRFI excepts a path.
 
 To get the list of supported implementations run:
 
