@@ -49,6 +49,7 @@ as compiler.
 
 - chezscheme
     - interpreter
+    - R6RS
     - r6rs
 - chibi
     - interpreter
@@ -71,50 +72,51 @@ as compiler.
 - guile
     - interpreter
     - r6rs
+    - R6RS
     - r7rs
         - Has include bug https://debbugs.gnu.org/cgi/bugreport.cgi?bug=66046
         but for some reason it seems to work for me atleast sometimes
 - ikarus
     - interpreter
-    - r6rs
+    - R6RS
 - ironscheme
     - interpreter
-    - r6rs
+    - R6RS
 - kawa
     - interpreter
-    - r7rs
+    - R7RS
 - larceny
     - interpreter
-    - r6rs
-    - r7rs
+    - R6RS
+    - R7RS
 - loko
     - compiler
-    - r6rs
-    - r7rs
+    - R6RS
+    - R7RS
 - mit-scheme
     - interpreter
-    - r7rs
+    - R7RS
 - mosh
     - interpreter
-    - r6rs
-    - r7rs
+    - R6RS
+    - R7RS
 - sagittarius
     - interpreter
-    - r6rs
-    - r7rs
+    - R6RS
+    - R7RS
 - skint
     - interpreter
-    - r7rs
+    - R7RS
 - stklos
     - interpreter
-    - r7rs
+    - R7RS
 - tr7
     - interpreter
-    - r7rs
+    - R7RS
 - ypsilon
     - interpreter
-    - r6rs
-    - r7rs
+    - R6RS
+    - R7RS
 
 ## Roadmap
 <a name="#roadmap"></a>
