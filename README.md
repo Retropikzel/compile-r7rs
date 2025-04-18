@@ -3,6 +3,12 @@ with [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 
 Despite it's name it also supports R6RS. Schemers, unite! <3
 
+[Project](https://sr.ht/~retropikzel/compile-r7rs/)
+
+[Mailing lists](https://sr.ht/~retropikzel/compile-r7rs/lists)
+
+[Issue tracker](https://sr.ht/~retropikzel/compile-r7rs/trackers)
+
 - [Notes](#notes)
 - [Supported implementations](#supported-implementations)
 - [Roadmap](#roadmap)
