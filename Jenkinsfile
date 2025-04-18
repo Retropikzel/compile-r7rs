@@ -5,9 +5,8 @@ pipeline {
     }
     stages {
         stage("Build") {
-            agent { docker { image 'schemers/sagittarius'; args '--user=root' } }
+            agent { docker { image 'schemers/chezscheme'; args '--user=root --build-arg COMPILE_R7RS=sagittarius' } }
             steps {
-                sh 'apt-get update && apt-get install -y make libuv1'
                 sh 'make'
                 sh 'make install'
                 sh 'make COMPILE_R7RS=sagittarius test-r6rs'
@@ -15,11 +14,9 @@ pipeline {
             }
         }
         stage("Test chez r6rs") {
-            agent { docker { image 'schemers/chezscheme'; args '--user=root' } }
+            agent { docker { image 'schemers/chezscheme'; args '--user=root --build-arg COMPILE_R7RS=chezscheme' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
-                    sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=chezscheme test-r6rs'
                 }
@@ -29,7 +26,6 @@ pipeline {
             agent { docker { image 'schemers/chibi'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=chibi test-r7rs'
@@ -40,7 +36,6 @@ pipeline {
             agent { docker { image 'schemers/cyclone'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=cyclone test-r7rs'
@@ -51,7 +46,6 @@ pipeline {
             agent { docker { image 'schemers/foment'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=foment test-r7rs'
@@ -62,7 +56,6 @@ pipeline {
             agent { docker { image 'schemers/gauche'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=gauche test-r7rs'
@@ -73,7 +66,6 @@ pipeline {
             agent { docker { image 'schemers/guile'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=guile test-r6rs'
@@ -84,7 +76,6 @@ pipeline {
             agent { docker { image 'schemers/guile'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=guile test-r7rs'
@@ -95,7 +86,6 @@ pipeline {
             agent { docker { image 'schemers/ikarus'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=ikarus test-r7rs'
@@ -106,7 +96,6 @@ pipeline {
             agent { docker { image 'schemers/ironscheme'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=ironscheme test-r7rs'
@@ -117,7 +106,6 @@ pipeline {
             agent { docker { image 'schemers/kawa'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=kawa test-r7rs'
@@ -128,7 +116,6 @@ pipeline {
             agent { docker { image 'schemers/larceny'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=larceny test-r6rs'
@@ -139,7 +126,6 @@ pipeline {
             agent { docker { image 'schemers/larceny'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=larceny test-r7rs'
@@ -150,7 +136,6 @@ pipeline {
             agent { docker { image 'schemers/loko'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=loko test-r6rs'
@@ -161,7 +146,6 @@ pipeline {
             agent { docker { image 'schemers/loko'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=loko test-r7rs'
@@ -172,7 +156,6 @@ pipeline {
             agent { docker { image 'schemers/mit-scheme'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=mit-scheme test-r7rs'
@@ -183,7 +166,6 @@ pipeline {
             agent { docker { image 'schemers/mosh'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=mosh test-r6rs'
@@ -194,7 +176,6 @@ pipeline {
             agent { docker { image 'schemers/mosh'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=mosh test-r7rs'
@@ -205,7 +186,6 @@ pipeline {
             agent { docker { image 'schemers/sagittarius'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=sagittarius test-r6rs'
@@ -216,7 +196,6 @@ pipeline {
             agent { docker { image 'schemers/sagittarius'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=sagittarius test-r7rs'
@@ -227,7 +206,6 @@ pipeline {
             agent { docker { image 'schemers/skint'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=skint test-r7rs'
@@ -238,7 +216,6 @@ pipeline {
             agent { docker { image 'schemers/tr7'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=tr7 test-r7rs'
@@ -249,7 +226,6 @@ pipeline {
             agent { docker { image 'schemers/ypsilon'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=ypsilon test-r6rs'
@@ -260,7 +236,6 @@ pipeline {
             agent { docker { image 'schemers/ypsilon'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh'apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev && wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz && cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install'
                     sh 'apt-get update && apt-get install -y make libuv1'
                     sh 'make && make install'
                     sh 'make COMPILE_R7RS=ypsilon test-r7rs'
