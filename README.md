@@ -286,7 +286,7 @@ For example if your projects file structure is:
 The command to compile and run this project is:
 
     compile-r7rs -I . -o myproject main.scm
-    ./main
+    ./myproject
 
 If your project has more than one library then you propably want to store the
 libraries in one directory. For example:
@@ -298,7 +298,7 @@ This is the case the compile-r7rs is tested against, main.scm imports (foo bar).
 The command to compile and run this project is:
 
     compile-r7rs -I ./snow -o myproject main.scm
-    ./main
+    ./myproject
 
 ### Installation of your project
 <a name="#usual-rnrs-projects-installation-of-your-project"></a>
