@@ -9,6 +9,8 @@ Despite it's name it also supports R6RS. Schemers, unite! <3
 
 [Issue tracker](https://todo.sr.ht/~retropikzel/compile-r7rs)
 
+[Jenkins](https://jenkins.scheme.org/job/compile-r7rs/)
+
 - [Notes](#notes)
 - [Supported implementations](#supported-implementations)
 - [Roadmap](#roadmap)
