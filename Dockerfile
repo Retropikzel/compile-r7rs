@@ -8,3 +8,4 @@ FROM schemers/${COMPILE_R7RS}
 RUN apt-get update && apt-get install -y make libffi8 libgc1 libssl3 libuv1
 COPY --from=build /usr/local-other/ /usr/local-other/
 ENV PATH=${PATH}:/usr/local-other/bin
+ENV COMPILE_R7RS=${COMPILE_R7RS}
