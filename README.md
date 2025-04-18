@@ -113,7 +113,8 @@ as compiler.
     - Gerbil
         - Dont know how to run this thing yet :D
     - Husk
-        - Dont know how to add directories to load path yet
+        - Dont know how to add directories to load path yet, might not be
+        implemented
     - Meevax
         - Asked how to add directory to load path
         https://github.com/yamacir-kit/meevax/issues/494, might not be
