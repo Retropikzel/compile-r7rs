@@ -7,7 +7,7 @@ Despite it's name it also supports R6RS. Schemers, unite! <3
 
 [Mailing lists](https://sr.ht/~retropikzel/compile-r7rs/lists)
 
-[Issue tracker](https://sr.ht/~retropikzel/compile-r7rs/trackers)
+[Issue tracker](https://todo.sr.ht/~retropikzel/compile-r7rs)
 
 - [Notes](#notes)
 - [Supported implementations](#supported-implementations)
