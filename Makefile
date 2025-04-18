@@ -17,6 +17,9 @@ install:
 	cp compile-r7rs.scm ${PREFIX}/lib/compile-r7rs/main.scm
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
+install-compile-r7rs-docker:
+	install compile-r7rs-docker.sh ${PREFIX}/bin/compile-r7rs-docker
+
 uninstall:
 	rm -rf ${PREFIX}/lib/compile-r7rs/snow
 	rm -rf ${PREFIX}/bin/compile-r7rs
