@@ -26,6 +26,9 @@ Despite it's name it also supports R6RS. Schemers, unite! <3
 - [Usual RnRS project](#usual-rnrs-project)
     - [File structure](#usual-rnrs-project-file-structure)
     - [Installation of your project](#usual-rnrs-project-installation-of-your-project)
+- [How it works](#how-it-works)
+    - [Gambit](#how-it-works-gambit)
+    - [Racket](#how-it-works-racket)
 - [Development](#development)
     - [Adding new implementations](#development-adding-new-implementations)
     - [Misc notes](#development-misc-notes)
@@ -117,25 +120,40 @@ as compiler.
 <a name="#roadmap"></a>
 
 - Support for more implementations
-    - Gerbil
+    - gerbil
         - Dont know how to run this thing yet :D
-    - Husk
+        - r7rs
+    - husk
         - Dont know how to add directories to load path yet, might not be
         implemented
-    - Meevax
+        - r7rs
+    - meevax
         - Asked how to add directory to load path
         https://github.com/yamacir-kit/meevax/issues/494, might not be
         implemented yet
-    - Picrin
+        - r7rs
+    - racket
+        - Wants the library paths to be full paths so I need to implement
+        realpath into [pffi-srfi-170](https://git.sr.ht/~retropikzel/pffi-srfi-170)
+        to get them
+        - r6rs
+        - r7rs
+    - picrin
         - Might not be possible, seems to not have (include...) that works like
         others
-    - Stak
+        - r7rs
+    - scheme-rs
         - Waiting for implementation support
-        https://github.com/raviqqe/stak/issues/2355
-    - Vicare
+        - r6rs
+        - r7rs
+    - stak
+        - Waiting for implementation support https://github.com/raviqqe/stak/issues/2355
+        - r7rs
+    - vicare
         - So old that I have problems compiling it in Docker, so testing is
         hard but I expect it to work once I get it to compile as it is R6RS
         implementation
+        - r6rs
 - Better and tested support for Windows
     - Right now there is support for running this but I can not quarantee it
     works on all if any cases
@@ -147,6 +165,9 @@ as compiler.
     implement this onto implementations myself
     - This might not be as important, but it would be nice to go towards SRFI-138
     conformaty
+- Environment variable to force the target operating system
+    - Since for example for interpreters the program produces .bat file with
+    command to run the interpreter "cross compiling" is easy.
 
 ## Dependencies
 <a name="#dependencies"></a>
@@ -261,6 +282,7 @@ Here is a sample Dockerfile to get you started.
     RUN apt-get update && apt-get install -y make libffi8 libgc1 libssl3 libuv1 git
     COPY --from=build /usr/local-other/ /usr/local-other/
     ENV PATH=${PATH}:/usr/local-other/bin
+    ARG COMPILE_R7RS=chibi
     ENV COMPILE_R7RS=${COMPILE_R7RS}
     RUN git clone https://git.sr.ht/~retropikzel/compile-r7rs && cd compile-r7rs && make && make install
 
@@ -352,6 +374,38 @@ Chicken compiles shared object files and is different from that, like I said I
 hope to update this section when I get more experience with installing stuff
 compiled by using this project. :)
 
+## How it works
+<a name="#how-it-works"></a>
+
+### Gambit
+<a name="#how-it-works-gambit"></a>
+
+To add library path into executables load path you need to compile Gambit
+script, not code. The script needs to be shebang and then the code:
+
+    #!/usr/bin/env gsi -:search=./snow
+    (import (scheme base)
+            (scheme write))
+    (display "Hello world")
+    (newline)
+
+So in order to do this compile-r7rs creates a main.tmp file that contains the
+shebang line, library directories you want and then your input files code.
+
+### Racket
+<a name="#how-it-works-racket"></a>
+
+#### r7rs
+
+Racket only supports .rkt files, so the transformer creates .rkt file for each
+.sld file and the given .scm file. This file only needs to contain:
+
+    #!lang r7rs
+    (import (scheme base))
+    (include "file.scm/.sld")
+
+So that is what compile-r7rs does for you.
+
 ## Development
 <a name="#development"></a>
 
@@ -377,6 +431,10 @@ to add the transformer functions and other data for it in libs/data.scm. You
 should be able to deduct how they work from other transformers. If you need to
 make utility functions add them into libs/util.scm and export them in
 libs/util.sld.
+
+If the transformer has to go trough hoops, that is is little or much unusual
+then it is a good idea to explain how it works in this readmes how it works
+section.
 
 ### Misc notes
 <a name="#development-misc-notes"></a>
