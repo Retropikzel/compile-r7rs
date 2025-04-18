@@ -86,7 +86,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'make && make install'
-                    sh 'make test-r7rs'
+                    sh 'make test-r6rs'
                 }
             }
         }
