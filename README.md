@@ -356,10 +356,10 @@ projects. That said bug fixes for this projects are also welcome. Pull requests
 that add more SRFI-138 support are also welcome, but lets keep the scope on
 that.
 
-The program itself is a quite simple transformer of inputs to implementation
-specific inputs. It stands on the shoulders of giants and relies on the
-implementations to have all the needed features, then unifies the interface to
-use them.
+The program itself is a quite straighforward transformer of SRFI-138 inputs to
+implementation specific inputs. It stands on the shoulders of giants and relies
+on the implementations to have all the needed features, then unifies the
+interface to use them.
 
 ### Adding new implementations
 <a name="#development-adding-new-implementations"></a>
