@@ -50,30 +50,28 @@ as compiler.
 - chezscheme
     - interpreter
     - R6RS
-    - r6rs
 - chibi
     - interpreter
-    - r7rs
+    - R7RS
 - chicken
     - compiler
-    - r7rs
+    - R7RS
 - cyclone
     - compiler
-    - r7rs
+    - R7RS
 - gambit
     - compiler
-    - r7rs
+    - R7RS
 - foment
     - interpreter
-    - r7rs
+    - R7RS
 - gauche
     - interpreter
-    - r7rs
+    - R7RS
 - guile
     - interpreter
-    - r6rs
     - R6RS
-    - r7rs
+    - R7RS
         - Has include bug https://debbugs.gnu.org/cgi/bugreport.cgi?bug=66046
         but for some reason it seems to work for me atleast sometimes
 - ikarus
