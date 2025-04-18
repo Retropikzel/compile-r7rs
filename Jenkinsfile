@@ -19,6 +19,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=chibi test-r6rs'
                 }
             }
@@ -28,6 +29,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=chibi test-r7rs'
                 }
             }
@@ -37,6 +39,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=cyclone test-r7rs'
                 }
             }
@@ -46,6 +49,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=foment test-r7rs'
                 }
             }
@@ -55,6 +59,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=gauche test-r7rs'
                 }
             }
@@ -64,6 +69,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=guile test-r6rs'
                 }
             }
@@ -73,6 +79,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=guile test-r7rs'
                 }
             }
@@ -82,6 +89,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=ikarus test-r7rs'
                 }
             }
@@ -91,6 +99,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=ironscheme test-r7rs'
                 }
             }
@@ -100,6 +109,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=kawa test-r7rs'
                 }
             }
@@ -109,6 +119,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=larceny test-r6rs'
                 }
             }
@@ -118,6 +129,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=larceny test-r7rs'
                 }
             }
@@ -127,6 +139,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=loko test-r6rs'
                 }
             }
@@ -136,6 +149,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=loko test-r7rs'
                 }
             }
@@ -145,6 +159,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=mit-scheme test-r7rs'
                 }
             }
@@ -154,6 +169,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=mosh test-r6rs'
                 }
             }
@@ -163,6 +179,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=mosh test-r7rs'
                 }
             }
@@ -172,6 +189,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=sagittarius test-r6rs'
                 }
             }
@@ -181,6 +199,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=sagittarius test-r7rs'
                 }
             }
@@ -190,6 +209,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=skint test-r7rs'
                 }
             }
@@ -199,6 +219,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=tr7 test-r7rs'
                 }
             }
@@ -208,6 +229,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=ypsilon test-r6rs'
                 }
             }
@@ -217,6 +239,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
+                    sh 'make && make install'
                     sh 'make COMPILE_R7RS=ypsilon test-r7rs'
                 }
             }
