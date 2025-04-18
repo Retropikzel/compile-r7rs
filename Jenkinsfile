@@ -2,6 +2,7 @@ pipeline {
     agent {
         dockerfile {
             filename 'Dockerfile.jenkins'
+            args '--privileged'
         }
     }
     options {
