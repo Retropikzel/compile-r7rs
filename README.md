@@ -260,7 +260,7 @@ and input file to .sps file and other way around is undefined behaviour.
 - COMPILE\_R7RS\_SCHEME_NAME
     - Additional string to insert right after the command and it's arguments
     can be used for example to pass C compiler flags on implementations that
-    compile to C
+    compile to C or anything or otherwise as backdoor
     - For example for Chicken to link with libcurl you would set
     COMPILE\_R7RS\_CHICKEN="-L -lcurl"
     - If implementation has - it is changed to \_, for example mit-scheme ->
