@@ -5,7 +5,7 @@ pipeline {
     }
     stages {
         stage("Build") {
-            agent { docker { image 'schemers/sagittarius', args '--user=root' } }
+            agent { docker { image 'schemers/sagittarius'; args '--user=root' } }
             steps {
                 sh 'apt-get update && apt-get install -y make libuv1'
                 sh 'make'
@@ -15,7 +15,7 @@ pipeline {
             }
         }
         stage("Test chez r6rs") {
-            agent { docker { image 'schemers/chezscheme', args '--user=root' } }
+            agent { docker { image 'schemers/chezscheme'; args '--user=root' } }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'apt-get update && apt-get install -y make libuv1'
