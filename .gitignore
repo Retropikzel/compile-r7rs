@@ -1,13 +1,12 @@
 *.swp
+*.swo
 *.link
 compile-r7rs
-test/foo
-test/libs/bar/baz
+test
 *.c
 *.o
 *.o*
 *.so
-!chicken
 !src
 *.rkt
-
+README.txt

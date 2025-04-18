@@ -1,2 +1,3 @@
-@echo off 
-sash.exe -r7 -L C:\Program Files (x86)/compile-r7rs/snow C:\Program Files (x86)compile-r7rs/main.scm %* 
+@echo off
+set "PFFI_LOAD_PATH=%PROGRAMFILES%/compile-r7rs/snow/srfi"
+sash.exe -r7 -L "%PROGRAMFILES%/compile-r7rs/snow" -L "%PROGRAMFILES%/compile-r7rs" "%PROGRAMFILES%/compile-r7rs/main.scm" %*

@@ -2,7 +2,7 @@
 PREFIX=/usr/local
 
 build:
-	printf "#!/bin/sh\nsash -r7 -L ${PREFIX}/lib/compile-r7rs/snow ${PREFIX}/lib/compile-r7rs/main.scm \"\$$@\"\n" > compile-r7rs
+	printf "#!/bin/sh\nsash --disable-cache -r7 -L ${PREFIX}/lib/compile-r7rs/snow ${PREFIX}/lib/compile-r7rs/main.scm \"\$$@\"\n" > compile-r7rs
 
 snow:
 	rm -rf snow
@@ -21,13 +21,55 @@ uninstall:
 	rm -rf ${PREFIX}/lib/compile-r7rs/snow
 	rm -rf ${PREFIX}/bin/compile-r7rs
 
+dist:
+	mkdir -p dist
+
+# Uses wine and innosetup
+installer-exe: dist
+	cp README.md README.txt
+	wine "${HOME}/.wine/drive_c/Program Files (x86)/Inno Setup 6./Compil32.exe" /cc installer.iss
+
+test-r6rs:
+	rm -rf /tmp/compile-r7rs-test-result.txt
+	mkdir -p test
+	mkdir -p test/snow
+	mkdir -p test/snow/foo
+	echo "(library (foo bar) (export baz) (import (rnrs)) (define baz (lambda () (display \"Test successfull\") (newline))))" > test/snow/foo/bar.sls
+	echo "(import (rnrs) (foo bar)) (baz)" > test/main.sps
+	cd test && COMPILE_R7RS=${COMPILE_R7RS} compile-r7rs -I ./snow -o main main.sps
+	-cd test && ./main > /tmp/compile-r7rs-test-result.txt 2>&1
+	@grep "Test successfull" /tmp/compile-r7rs-test-result.txt || (echo "Test failed, output: " && cat /tmp/compile-r7rs-test-result.txt && exit 1)
+
+test-r6rs-docker:
+	docker build --build-arg COMPILE_R7RS=${COMPILE_R7RS} --tag=compile-r7rs-test-${COMPILE_R7RS} .
+	docker run -v "${PWD}":/workdir -w /workdir -t compile-r7rs-test-${COMPILE_R7RS} sh -c "make && make install && make clean-test COMPILE_R7RS=${COMPILE_R7RS} test-r6rs"
+
+test-r7rs:
+	rm -rf /tmp/compile-r7rs-test-result.txt
+	mkdir -p test
+	mkdir -p test/snow
+	mkdir -p test/snow/foo
+	echo "(import (scheme base) (foo bar)) (baz)" > test/main.scm
+	echo "(define baz (lambda () (display \"Test successfull\") (newline)))" > test/snow/foo/bar.scm
+	echo "(define-library (foo bar) (import (scheme base) (scheme write)) (export baz) (include \"bar.scm\"))" > test/snow/foo/bar.sld
+	cd test && COMPILE_R7RS=${COMPILE_R7RS} compile-r7rs -I ./snow -o main main.scm
+	-cd test && ./main > /tmp/compile-r7rs-test-result.txt 2>&1
+	@grep "Test successfull" /tmp/compile-r7rs-test-result.txt || (echo "Test failed, output: " && cat /tmp/compile-r7rs-test-result.txt && exit 1)
+
+test-r7rs-docker:
+	docker build --build-arg COMPILE_R7RS=${COMPILE_R7RS} --tag=compile-r7rs-test-${COMPILE_R7RS} .
+	docker run -v "${PWD}":/workdir -w /workdir -t compile-r7rs-test-${COMPILE_R7RS} sh -c "make && make install && make clean-test COMPILE_R7RS=${COMPILE_R7RS} test-r7rs"
+
 clean:
-	rm -rf test/foo
-	rm -rf test/libs/bar/baz
 	find . -name "*.so" -delete
 	find . -name "*.o*" -delete
 	find . -name "*.rkt" -delete
-	find ./test -name "*.c" -delete
 	find . -name "*.link" -delete
 	find . -name "*.meta" -delete
 	find . -name "*.import.*" -delete
+	rm -rf README.txt
+	rm -rf dist
+	rm -rf test
+
+clean-test:
+	rm -rf test

@@ -8,7 +8,7 @@
 
 (cond-expand
   (windows
-    (pffi-define-library libc '("stdio.h") "ucrtbase"))
+    (pffi-define-library libc '("stdio.h") "ucrtbase" '()))
   (else
     (pffi-define-library libc
                          '("stdio.h" "error.h")
@@ -21,7 +21,7 @@
                      '((additional-versions ("1" "1.0.0"))))
 
 (cond-expand
-  (windows (pffi-define-library libkernel '("windows.h") "kernel32"))
+  (windows (pffi-define-library libkernel '("windows.h") "kernel32" '()))
   (else #f))
 
 ;(pffi-define c-puts libc 'puts 'int '(string))

@@ -13,24 +13,38 @@
     (lambda (scheme)
       (display scheme)
       (newline))
-    '(chibi
+    '(chezscheme
+       chibi
+       chicken
        cyclone
+       gambit
+       foment
        gauche
-       ;guile
+       ;gerbil
+       guile
+       ;husk
+       ikarus
+       ironscheme
        kawa
+       larceny
        loko
+       ;meevax
+       mit-scheme
        mosh
+       ;picrin
+       ;stak
        sagittarius
        skint
        stklos
        tr7
+       ;vicare
        ypsilon))
   (exit 0))
 
-(define scheme (if (get-environment-variable "SCHEME")
-                  (string->symbol (get-environment-variable "SCHEME"))
+(define scheme (if (get-environment-variable "COMPILE_R7RS")
+                  (string->symbol (get-environment-variable "COMPILE_R7RS"))
                   #f))
-(when (not scheme) (error "Environment variable SCHEME not set."))
+(when (not scheme) (error "Environment variable COMPILE_R7RS not set."))
 (when (not (assoc scheme data))
   (error "Unsupported implementation" scheme))
 (define compilation-target (if (get-environment-variable "TARGET")
@@ -42,19 +56,22 @@
   (let ((input-file #f))
     (for-each
       (lambda (item)
-        (when (and (> (string-length item) 4)
-                   (string=? ".scm" (string-copy item
-                                                 (- (string-length item) 4)
-                                                 (string-length item))))
+        (when (or (string-ends-with? item ".scm")
+                  (string-ends-with? item ".sps"))
           (set! input-file item)))
       (list-tail (command-line) 1))
     input-file))
+
+(define r6rs?  (if (and input-file
+                        (string-ends-with? input-file ".sps"))
+                 #t
+                 #f))
 
 (define output-file
   (if (member "-o" (command-line))
     (cadr (member "-o" (command-line)))
     (if input-file
-      (string-copy input-file 0 (- (string-length input-file) 4))
+      "a.out"
       #f)))
 
 (define prepend-directories
@@ -95,7 +112,11 @@
         (lambda (file)
           (let* ((path (string-append directory "/" file))
                  (info (file-info path #f)))
-            (when (string-ends-with? path ".sld")
+            (when (and (not r6rs?)
+                       (string-ends-with? path ".sld"))
+              (set! result (append result (list path))))
+            (when (and r6rs?
+                       (string-ends-with? path ".sls"))
               (set! result (append result (list path))))
             (if (file-info-directory? info)
               (set! result (append result (search-library-files path))))))
@@ -119,12 +140,13 @@
                (if output-file output-file "")
                prepend-directories
                append-directories
-               library-files)))
+               library-files
+               r6rs?)))
 
 (define scheme-library-command
   (lambda (library-file)
     (apply (cdr (assoc 'library-command (cdr (assoc scheme data))))
-      (list library-file prepend-directories append-directories))))
+      (list library-file prepend-directories append-directories r6rs?))))
 
 
 (define list-of-features
@@ -144,60 +166,67 @@
 (display "Type              ")
 (display scheme-type)
 (newline)
-(display "Command           ")
-(display scheme-command)
 (newline)
-(display "Input file        ")
-(display input-file)
-(newline)
-(display "Output file       ")
-(display output-file)
-(newline)
+
+; Compile libraries
+(cond ((assoc 'library-command (cdr (assoc scheme data)))
+       (for-each
+         (lambda (file)
+           (let* ((library-command (scheme-library-command file)))
+             (display "Compiling library ")
+             (display file)
+             (newline)
+             (display "With command      ")
+             (display library-command)
+             (newline)
+             (display "Exit code         ")
+             (let ((output (c-system (pffi-string->pointer library-command))))
+               (when (not (= output 0))
+                 (error "Problem compiling libraries, exiting" output))
+               (display output))
+             (newline)
+             (newline)))
+         library-files))
+      (else
+        (display "Implementation has no library build command, skipping library compilation.")
+        (newline)))
 
 ; Create executable file
 (when (and (equal? scheme-type 'interpreter) input-file)
   (when (and output-file (file-exists? output-file))
     (delete-file output-file))
-  (with-output-to-file
+    (display "Creating startup script    ")
+    (display output-file)
+    (newline)
+    (display "Containing command         ")
+    (display scheme-command)
+    (newline)
+    (with-output-to-file
     (if (string=? compilation-target "windows")
       (string-append output-file ".bat")
       output-file)
     (lambda ()
-      (when (string=? compilation-target "unix")
-        (display "#!/bin/sh"))
-      (when (string=? compilation-target "windows")
-        (display "@echo off"))
-      (newline)
-      (when (string=? compilation-target "windows")
-        (display "start"))
-      (display scheme-command))))
+      (cond ((string=? compilation-target "unix")
+             (display "#!/bin/sh")
+             (newline))
+            ((string=? compilation-target "windows")
+             (display "@echo off")
+             (newline)
+             (display "start")))
+      (display scheme-command)))
+  (cond ((string=? compilation-target "unix")
+         (c-system (pffi-string->pointer (string-append "chmod +x " output-file))))))
 
 (when (and (equal? scheme-type 'compiler) input-file)
-  (when (file-exists? output-file) (delete-file output-file))
+  (when (and output-file (file-exists? output-file))
+    (delete-file output-file))
   (display "Compiling file    ")
   (display input-file)
   (newline)
   (display "With command      ")
   (display scheme-command)
   (newline)
-  (c-system (pffi-string->pointer scheme-command)))
+  (display "Exit code         ")
+  (display (c-system (pffi-string->pointer scheme-command)))
+  (newline))
 
-; Compile libraries
-(cond ((and (not input-file) (assoc 'library-command (cdr (assoc scheme data))))
-       (when (and output-file (file-exists? output-file))
-         (delete-file output-file))
-      (for-each
-             (lambda (file)
-               (let* ((command (scheme-library-command file)))
-                 (display "Compiling library ")
-                 (display file)
-                 (newline)
-                 (display "With command      ")
-                 (display command)
-                 (newline)
-                 (c-system (pffi-string->pointer command))))
-             library-files))
-      ((not input-file)
-       (display "Library compilation requested but no library command found. ")
-       (display "Skipping...")
-       (newline)))

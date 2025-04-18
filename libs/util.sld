@@ -1,18 +1,31 @@
 (define-library
   (libs util)
-  (import (scheme base))
+  (import (scheme base)
+          (scheme process-context))
   (export string-replace
           string-ends-with?
           string-starts-with?
+          string-cut-from-end
           string-find
           string-reverse
           path->filename
           change-file-suffix
-          string-join)
+          string-join
+          util-getenv)
   (begin
+
+    (define util-getenv
+      (lambda (name)
+        (if (get-environment-variable name)
+          (get-environment-variable name)
+          "")))
+
     (define string-replace
       (lambda (string-content replace with)
-        (string-map (lambda (c) (char=? c replace) with c) string-content)))
+        (string-map (lambda (c)
+                      (if (char=? c replace)
+                      with c))
+                    string-content)))
 
     (define string-ends-with?
       (lambda (string-content end)
@@ -33,6 +46,13 @@
                            start))
           #t
           #f)))
+
+    (define string-cut-from-end
+      (lambda (string-content cut-length)
+        (string-copy string-content
+                     0
+                     (- (string-length string-content) 4))))
+
 
     (define string-find
       (lambda (string-content character)
