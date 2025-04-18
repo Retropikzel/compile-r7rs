@@ -12,7 +12,7 @@ pipeline {
                   }
             }
             steps {
-                sh 'apt-get update && apt-get install -y make'
+                sh 'apt-get update && apt-get install -y make libuv1'
                 sh 'make'
                 sh 'make install'
                 sh 'make SCHEME=sagittarius test-r6rs'
@@ -22,7 +22,6 @@ pipeline {
         stage("Test chez r6rs") {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'apt-get update && apt-get install -y make'
                     sh 'make SCHEME=chibi test-r6rs-docker'
                 }
             }
