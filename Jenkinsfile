@@ -4,6 +4,11 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
     }
     stages {
+        stage("Clean docker cache") {
+            steps {
+                sh 'docker system prune -a -f'
+            }
+        }
         stage("Build") {
             agent { dockerfile { filename 'Dockerfile'; args '--user=root'; additionalBuildArgs '--build-arg COMPILE_R7RS=sagittarius' } }
             steps {
