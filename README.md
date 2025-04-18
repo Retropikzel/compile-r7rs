@@ -122,9 +122,8 @@ as compiler.
         - Might not be possible, seems to not have (include...) that works like
         others
     - Stak
-        - Asked how to add directoy to load path
-        https://github.com/raviqqe/stak/issues/2355, migth not be implemented
-        yet
+        - Waiting for implementation support
+        https://github.com/raviqqe/stak/issues/2355
     - Vicare
         - So old that I have problems compiling it in Docker, so testing is
         hard but I expect it to work once I get it to compile as it is R6RS
