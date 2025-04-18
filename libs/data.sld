@@ -283,11 +283,8 @@
                                  " "
                                  "-Dkawa.import.path="
                                  ,@(map (lambda (item)
-                                          (string-append item ":" item "/*.sld:" " "))
-                                        prepend-directories)
-                                 ,@(map (lambda (item)
-                                          (string-append item ":" item "/*.sld:" " "))
-                                        append-directories)
+                                          (string-append item "/*.sld:"))
+                                        (append prepend-directories append-directories))
                                  " "
                                  ,input-file)))))
         (larceny

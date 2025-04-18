@@ -31,7 +31,9 @@
        ;meevax
        mit-scheme
        mosh
+       ;racket
        ;picrin
+       ;scheme-rs
        ;stak
        sagittarius
        skint
