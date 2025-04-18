@@ -1,8 +1,7 @@
 compile-r7rs is a tool to compile Scheme programs, it aims for compability
 with [SRFI-138](https://srfi.schemers.org/srfi-138/srfi-138.html).
 
-Despite it's name it also supports R6RS implementations and compilation.
-Schemers, unite! <3
+Despite it's name it also supports R6RS. Schemers, unite! <3
 
 - [Notes](#notes)
 - [Supported implementations](#supported-implementations)
