@@ -5,8 +5,8 @@ RUN wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius
 RUN cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install
 
 FROM schemers/${COMPILE_R7RS}
-ARG COMPILE_R7RS=chibi
 RUN apt-get update && apt-get install -y make libffi8 libgc1 libssl3 libuv1
 COPY --from=build /usr/local-other/ /usr/local-other/
 ENV PATH=${PATH}:/usr/local-other/bin
+ARG COMPILE_R7RS=chibi
 ENV COMPILE_R7RS=${COMPILE_R7RS}
