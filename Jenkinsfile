@@ -5,7 +5,7 @@ pipeline {
     }
     stages {
         stage("Build") {
-            agent { dockerfile { path 'Dockerfile'; args '--user=root --build-arg COMPILE_R7RS=sagittarius' } }
+            agent { dockerfile { filename 'Dockerfile'; args '--user=root --build-arg COMPILE_R7RS=sagittarius' } }
             steps {
                 sh 'make'
                 sh 'make install'
