@@ -9,8 +9,8 @@ pipeline {
             steps {
                 sh 'make'
                 sh 'make install'
-                sh 'make COMPILE_R7RS=${COMPILE_R7RS} test-r6rs'
-                sh 'make COMPILE_R7RS=${COMPILE_R7RS} test-r7rs'
+                sh 'make test-r6rs'
+                sh 'make test-r7rs'
             }
         }
         stage("Test chez r6rs") {
