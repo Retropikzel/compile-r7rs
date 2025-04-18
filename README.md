@@ -367,7 +367,7 @@ interface to use them.
 The main program reads the flags and other inputs and passes them to a
 transformer functions. So to add support for new implementations you need
 to add the transformer functions and other data for it in libs/data.scm. You
-should be able to decuct how they work from other transformers. If you need to
+should be able to deduct how they work from other transformers. If you need to
 make utility functions add them into libs/util.scm and export them in
 libs/util.sld.
 
