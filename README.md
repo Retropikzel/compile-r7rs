@@ -98,6 +98,11 @@ as compiler.
     - interpreter
     - R6RS
     - R7RS
+- racket
+    - interpreter
+        - Has compiling capabilities but I havent got them to work yet
+    - r6rs
+    - r7rs
 - sagittarius
     - interpreter
     - R6RS
@@ -131,12 +136,6 @@ as compiler.
         - Asked how to add directory to load path
         https://github.com/yamacir-kit/meevax/issues/494, might not be
         implemented yet
-        - r7rs
-    - racket
-        - Wants the library paths to be full paths so I need to implement
-        realpath into [pffi-srfi-170](https://git.sr.ht/~retropikzel/pffi-srfi-170)
-        to get them
-        - r6rs
         - r7rs
     - picrin
         - Might not be possible, seems to not have (include...) that works like
@@ -435,12 +434,3 @@ libs/util.sld.
 If the transformer has to go trough hoops, that is is little or much unusual
 then it is a good idea to explain how it works in this readmes how it works
 section.
-
-### Misc notes
-<a name="#development-misc-notes"></a>
-
-When developing and testing, run:
-
-    make && sudo make uninstall install
-
-without the uninstall the changes to libraries dont seem to update.

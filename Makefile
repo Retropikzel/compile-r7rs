@@ -1,16 +1,15 @@
-.PHONY: snow
 PREFIX=/usr/local
 
 build:
 	printf "#!/bin/sh\nsash --disable-cache -r7 -L ${PREFIX}/lib/compile-r7rs/snow ${PREFIX}/lib/compile-r7rs/main.scm \"\$$@\"\n" > compile-r7rs
 
 snow:
-	rm -rf snow
 	mkdir -p snow
 	cp -r ../r7rs-pffi/retropikzel snow/
 	cp -r ../pffi-srfi-170/srfi snow/
 
-install:
+# Does uninstall because without that the changes do not seem to update
+install: uninstall
 	mkdir -p ${PREFIX}/lib/compile-r7rs/snow
 	cp -r snow/* ${PREFIX}/lib/compile-r7rs/snow
 	cp -r libs ${PREFIX}/lib/compile-r7rs/snow/libs
@@ -63,6 +62,12 @@ test-r7rs-docker:
 	docker build --build-arg COMPILE_R7RS=${COMPILE_R7RS} --tag=compile-r7rs-test-${COMPILE_R7RS} .
 	docker run -v "${PWD}":/workdir -w /workdir -t compile-r7rs-test-${COMPILE_R7RS} sh -c "make && make install && make clean-test COMPILE_R7RS=${COMPILE_R7RS} test-r7rs"
 
+clean-snow:
+	rm -rf snow
+
+clean-test:
+	rm -rf test
+
 clean:
 	find . -name "*.so" -delete
 	find . -name "*.o*" -delete
@@ -74,5 +79,4 @@ clean:
 	rm -rf dist
 	rm -rf test
 
-clean-test:
-	rm -rf test
+

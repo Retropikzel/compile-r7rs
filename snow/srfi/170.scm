@@ -36,14 +36,55 @@
 (pffi-define uv-fs-scandir libuv 'uv_fs_scandir 'int '(pointer pointer pointer int pointer))
 (pffi-define uv-fs-scandir-next libuv 'uv_fs_scandir_next 'int '(pointer pointer))
 (pffi-define uv-fs-get-ptr libuv 'uv_fs_get_ptr 'pointer '(pointer))
+(pffi-define uv-fs-realpath libuv 'uv_fs_realpath 'int '(pointer pointer pointer pointer))
+(pffi-define uv-fs-cleanup libuv 'uv_fs_req_cleanup 'void '(pointer))
 ;(pffi-define uv-fs-scandir libuv 'uv_fs_scandir 'int '(pointer pointer pointer int pointer))
 ;(pffi-define c-printf libc 'printf 'int '(string))
 ;(pffi-define c-cos libc 'cos 'double '(double))
 
 (define UV-FS 6)
-(define uv-fs-t-make
+(pffi-define-struct uv-fs-t-make
+                    'uv_fs_t
+                    '((pointer . data)
+                      (int . type)
+                      (pointer . reserved1)
+                      (pointer . reserved2)
+                      (pointer . reserved3)
+                      (pointer . reserved4)
+                      (pointer . reserved5)
+                      (pointer . reserved6)
+                      (pointer . fs_type)
+                      (pointer . loop)
+                      (pointer . cb)
+                      (int . result)
+                      (pointer . ptr)
+                      (pointer . path)
+                      (int . statbuf)
+                      (pointer . new_path)
+                      (int . file)
+                      (int . flags)
+                      (int . mode)
+                      (pointer . bufs)
+                      (int . off)
+                      (int . uid)
+                      (int . gid)
+                      (double . atime)
+                      (double . mtime)
+                      (pointer . work_req)
+                      (pointer . bufsml1)
+                      (pointer . bufsml2)
+                      (pointer . bufsml3)
+                      (pointer . bufsml4)))
+
+(define req-type (uv-fs-t-make))
+
+;(pffi-struct-set! struct 'fs_type UV-FS)
+#;(define uv-fs-t-make
   (lambda ()
-    (let ((p (pffi-pointer-allocate (+ (pffi-size-of 'pointer)     ; .loop
+    (let ((struct (uv-fs-t)))
+      (pffi-struct-set! struct 'fs_type UV-FS)
+      struct
+    #;(let ((p (pffi-pointer-allocate (+ (pffi-size-of 'pointer)     ; .loop
                                        (pffi-size-of 'int)         ; .uv_fs_type
                                        (pffi-size-of 'pointer)     ; .path
                                        (pffi-size-of 'int)         ; .result
@@ -52,7 +93,11 @@
                                        512 ; Temporary fix
                                        ))))
       (pffi-pointer-set! p 'int (pffi-size-of 'pointer) UV-FS)
-      p)))
+      p))))
+
+(pffi-define-struct uv-dirent-make
+                    'uv_dirent_t
+                    '((pointer . name) (int . uv_dirent_type)))
 
 (define handle-errors
   (lambda (return-code . irritants)
@@ -85,115 +130,105 @@
 ; FIX make the "follow?" argument work
 (define file-info
   (lambda (fname/port follow?)
-    (let* ((req-type (uv-fs-t-make)))
-      (handle-errors (uv-fs-stat (uv-default-loop)
-                                 req-type
-                                 (pffi-string->pointer fname/port)
-                                 (pffi-pointer-null)))
-      (let ((stat-pointer (uv-fs-get-ptr req-type)))
-        (file-info-record-make (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 0))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 1))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 2))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 3))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 4))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 5))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 6))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 7))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 8))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 9))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 10))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 11))
-                               (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 12))
-                               fname/port
-                               follow?)))))
+    (handle-errors (uv-fs-stat (uv-default-loop)
+                               (pffi-struct-pointer req-type)
+                               (pffi-string->pointer fname/port)
+                               (pffi-pointer-null)))
+    (let* ((stat-pointer (uv-fs-get-ptr (pffi-struct-pointer req-type)))
+           (result (file-info-record-make (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 0))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 1))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 2))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 3))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 4))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 5))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 6))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 7))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 8))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 9))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 10))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 11))
+                                          (pffi-pointer-get stat-pointer 'uint64 (* (pffi-size-of 'uint64) 12))
+                                          fname/port
+                                          follow?)))
+      (uv-fs-cleanup (pffi-struct-pointer req-type))
+      result)))
 
 (define file-info-directory?
   (lambda (file-info)
     ; Try to open the file-info path as directory, if it fails say it's not a directory
-    (let ((req-type (uv-fs-t-make)))
-      (let* ((file-path (file-info:fname/port file-info))
-             (result (uv-fs-opendir (uv-default-loop)
-                                    req-type
-                                    (pffi-string->pointer file-path)
-                                    (pffi-pointer-null))))
-        (cond ((not (file-exists? file-path)) #f)
-              ((not (= result -20)) #t)
-              ; If it is a dir then it's open and needs to be closed
-              (else (uv-fs-closedir (uv-default-loop)
-                                    req-type
-                                    (uv-fs-get-ptr req-type)
-                                    (pffi-pointer-null))
-                    #f))))))
+    (let* ((file-path (file-info:fname/port file-info))
+           (uv-result (uv-fs-opendir (uv-default-loop)
+                                     (pffi-struct-pointer req-type)
+                                     (pffi-string->pointer file-path)
+                                     (pffi-pointer-null))))
+      (cond ((not (file-exists? file-path))
+             (uv-fs-cleanup (pffi-struct-pointer req-type))
+             #f)
+            ((not (= uv-result -20))
+             (uv-fs-cleanup (pffi-struct-pointer req-type))
+             #t)
+            ; If it is a dir then it's open and needs to be closed
+            (else (uv-fs-closedir (uv-default-loop)
+                                  (pffi-struct-pointer req-type)
+                                  (uv-fs-get-ptr (pffi-struct-pointer req-type))
+                                  (pffi-pointer-null))
+                  (uv-fs-cleanup (pffi-struct-pointer req-type))
+                  #f)))))
 
 (define create-directory
   (lambda (fname . permission-bits)
-    (let ((req-type (uv-fs-t-make))
-          (mode (if (null? permission-bits) #o775 (car permission-bits))))
+    (let ((mode (if (null? permission-bits) #o775 (car permission-bits))))
       (handle-errors (uv-fs-mkdir (uv-default-loop)
-                                  req-type
+                                  (pffi-struct-pointer req-type)
                                   (pffi-string->pointer fname)
                                   mode
                                   (pffi-pointer-null))
+                     (uv-fs-cleanup (pffi-struct-pointer req-type))
                      fname))))
 
 (define delete-directory
   (lambda (fname)
-    (let ((req-type (uv-fs-t-make)))
-      (handle-errors
-        (uv-fs-rmdir (uv-default-loop)
-                     req-type
-                     (pffi-string->pointer fname)
-                     (pffi-pointer-null))
-        fname))))
+    (handle-errors
+      (uv-fs-rmdir (uv-default-loop)
+                   (pffi-struct-pointer req-type)
+                   (pffi-string->pointer fname)
+                   (pffi-pointer-null))
+      (uv-fs-cleanup (pffi-struct-pointer req-type))
+      fname)))
 
 (define directory-files
   (lambda (dir . args)
     (letrec* ((dotfiles? (if (null? args) #f (car args)))
-              (req-type (uv-fs-t-make))
               (result (handle-errors (uv-fs-scandir (uv-default-loop)
-                                                    req-type
+                                                    (pffi-struct-pointer req-type)
                                                     (pffi-string->pointer dir)
                                                     0
                                                     (pffi-pointer-null))
                                      dir))
-              (uv-dirent-t (pffi-pointer-allocate (+ (pffi-size-of 'pointer)
-                                                     (pffi-size-of 'int)
-                                                     512)))
+              (uv-dirent-t (uv-dirent-make))
               (files (list))
               (looper
                 (lambda ()
-                  (let ((next-file (uv-fs-scandir-next req-type uv-dirent-t)))
+                  (let ((next-file (uv-fs-scandir-next (pffi-struct-pointer req-type)
+                                                       (pffi-struct-pointer uv-dirent-t))))
                     (when (= next-file 0) ; End of file
-                      (let ((file-name (string-copy (pffi-pointer->string (pffi-pointer-get uv-dirent-t 'pointer 0)))))
+                      (let ((file-name (pffi-pointer->string (pffi-struct-get uv-dirent-t 'name))))
                         (if (and (> (string-length file-name) 0)
                                  (char=? (string-ref file-name 0) #\.))
                           (if dotfiles? (set! files (append files (list file-name))))
-                          (set! files (append files (list file-name)))
-                          )
+                          (set! files (append files (list file-name))))
                         (looper)))))))
       (looper)
-      files
-      ;(write result)
-      ;(newline)
-      ;(write (uv-fs-scandir-next req-type uv-dirent-t))
-      ;(newline)
-      ;(write (pffi-pointer->string (pffi-pointer-get uv-dirent-t 'pointer 0)))
-      ;(newline)
+      (uv-fs-cleanup (pffi-struct-pointer req-type))
+      files)))
 
+(define real-path
+  (lambda (path)
+    (let* ((result (uv-fs-realpath (uv-default-loop)
+                                   (pffi-struct-pointer req-type)
+                                   (pffi-string->pointer path)
+                                   (pffi-pointer-null)))
+           (realpath (pffi-pointer->string (uv-fs-get-ptr (pffi-struct-pointer req-type)))))
+      (uv-fs-cleanup (pffi-struct-pointer req-type))
+      realpath)))
 
-
-
-
-
-      ;(write (uv-default-loop))
-      ;(newline)
-      ;(write (uv-fs-scandir (uv-default-loop) (pffi-string->pointer ".") 0 (pffi-pointer-null)))
-      ;(newline)
-      ;(write (c-opendir (pffi-string->pointer ".")))
-      ;(newline)
-      ;(c-puts (pffi-string->pointer "Hello world"))
-      ;(c-printf (pffi-string->pointer "Hello world\n"))
-      ;(newline)
-      ;(c-cos 5.5)
-      ;#t
-      )))

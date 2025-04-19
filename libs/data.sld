@@ -391,13 +391,26 @@
                                  " "
                                  ,input-file)))))
         (racket
-          (type . compiler)
+          (type . interpreter)
+          (library-command . ,(lambda (library-file prepend-directories append-directories r6rs?)
+                                (let ((library-rkt-file (change-file-suffix library-file ".rkt")))
+                                  (apply string-append
+                                         `("printf"
+                                           " "
+                                           "'#lang r7rs\\n(import (scheme base))\\n(include \""
+                                           ,(path->filename library-file)
+                                           "\")\\n"
+                                           "'"
+                                           " "
+                                           ">"
+                                           " "
+                                           ,library-rkt-file)))))
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
                         (let ((rkt-input-file (if (string=? input-file "")
                                                 ""
                                                 (change-file-suffix input-file ".rkt"))))
                           (when (not (string=? rkt-input-file ""))
-                            (if (file-exists? rkt-input-file)
+                            (when (file-exists? rkt-input-file)
                               (delete-file rkt-input-file))
                             (with-output-to-file
                               rkt-input-file
@@ -410,38 +423,23 @@
                                 (display (path->filename input-file))
                                 (display "\")")
                                 (newline))))
-                          (for-each
-                            (lambda (file)
-                              (let ((library-rkt-file (change-file-suffix file ".rkt")))
-                                (if (file-exists? library-rkt-file)
-                                  (delete-file library-rkt-file))
-                                (with-output-to-file
-                                  library-rkt-file
-                                  (lambda ()
-                                    (display "#lang r7rs")
-                                    (newline)
-                                    (display "(import (scheme base))")
-                                    (newline)
-                                    (display "(include \"")
-                                    (display (path->filename file))
-                                    (display "\")")
-                                    (newline)))))
-                            library-files)
                           (apply string-append
-                                 ;; TODO run realpath to each directory
-                                 ;; as Racket expects static paths
-                                 `("PLTCOLLECTS="
-                                   ,(string-join prepend-directories ":")
-                                   ,(string-join append-directories ":")
-                                   " "
-                                   "raco exe"
+                                 `("racket"
                                    " "
                                    ,(util-getenv "COMPILE_R7RS_RACKET")
                                    " "
-                                   "--orig-exe ++lang r7rs -o "
-                                   ,output-file
+                                   "-I"
                                    " "
-                                   ,rkt-input-file))))))
+                                   ,(if r6rs? "r6rs" "r7rs")
+                                   " "
+                                   ,@(map (lambda (item)
+                                            (string-append "-S " item " "))
+                                          prepend-directories)
+                                   ,@(map (lambda (item)
+                                            (string-append "-S " item " "))
+                                          append-directories)
+                                   " "
+                                   ,(if r6rs? input-file rkt-input-file)))))))
         (sagittarius
           (type . interpreter)
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)

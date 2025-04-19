@@ -3,7 +3,9 @@
   (import (scheme base)
           (scheme write)
           (scheme file)
-          (retropikzel pffi))
+          (retropikzel pffi)
+          (scheme process-context)
+          )
   (export ;posix-error?
           ;posix-error-name
           ;posix-error-message
@@ -46,7 +48,7 @@
           ;open-directory
           ;read-directory
           ;close-directory
-          ;real-path
+          real-path
           ;file-space
           ;temp-file-prefix
           ;create-temp-file
