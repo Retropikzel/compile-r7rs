@@ -417,6 +417,8 @@
                         (let ((rkt-input-file (if (string=? input-file "")
                                                 ""
                                                 (change-file-suffix input-file ".rkt"))))
+                          (if r6rs?
+                            #t
                           (when (not (string=? rkt-input-file ""))
                             (when (file-exists? rkt-input-file)
                               (delete-file rkt-input-file))
@@ -430,7 +432,7 @@
                                 (display "(include \"")
                                 (display (path->filename input-file))
                                 (display "\")")
-                                (newline))))
+                                (newline)))))
                           (apply string-append
                                  `("racket"
                                    " "
@@ -447,7 +449,8 @@
                                             (string-append "-S " item " "))
                                           append-directories)
                                    " "
-                                   ,(if r6rs? input-file rkt-input-file)))))))
+                                   ,(if r6rs? input-file rkt-input-file)
+                                   ))))))
         (sagittarius
           (type . interpreter)
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
