@@ -277,14 +277,22 @@
                         (apply string-append
                                `("kawa"
                                  " "
-                                 ,(util-getenv "COMPILE_R7RS_KAWA")
+                                 "-J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED"
                                  " "
-                                 "--r7rs"
+                                 "-J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED"
+                                 " "
+                                 "-J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED"
+                                 " "
+                                 "-J--enable-native-access=ALL-UNNAMED"
+                                 " "
+                                 ,(util-getenv "COMPILE_R7RS_KAWA")
                                  " "
                                  "-Dkawa.import.path="
                                  ,@(map (lambda (item)
                                           (string-append item "/*.sld:"))
                                         (append prepend-directories append-directories))
+                                 " "
+                                 "--r7rs"
                                  " "
                                  ,input-file)))))
         (larceny

@@ -83,6 +83,7 @@ as compiler.
 - kawa
     - interpreter
     - R7RS
+    - Native access is enabled by default so pffi can work
 - larceny
     - interpreter
     - R6RS
