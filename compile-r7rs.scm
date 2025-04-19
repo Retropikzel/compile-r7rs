@@ -31,7 +31,7 @@
        ;meevax
        mit-scheme
        mosh
-       ;racket
+       racket
        ;picrin
        ;scheme-rs
        ;stak

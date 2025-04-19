@@ -403,8 +403,6 @@ Racket only supports .rkt files, so the transformer creates .rkt file for each
     (import (scheme base))
     (include "file.scm/.sld")
 
-So that is what compile-r7rs does for you.
-
 ## Development
 <a name="#development"></a>
 
