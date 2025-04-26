@@ -1,7 +1,8 @@
 (define-library
   (libs util)
   (import (scheme base)
-          (scheme process-context))
+          (scheme process-context)
+          (retropikzel pffi))
   (export string-replace
           string-ends-with?
           string-starts-with?
@@ -26,6 +27,24 @@
                       (if (char=? c replace)
                       with c))
                     string-content)))
+
+    (define string-replace-one
+      (lambda (string-content replace with)
+        (let ((replaced? #f))
+          (string-map (lambda (c)
+                        (if (and (not replaced?)
+                                 (char=? c replace))
+                          with c))
+                      string-content))))
+
+     (define string-replace-one-from-end
+       (lambda (string-content replace with)
+         (let ((replaced? #f))
+           (list->string (reverse (map (lambda (c)
+                                         (if (and (not replaced?)
+                                                  (char=? c replace))
+                                           with c))
+                                       (reverse (string->list string-content))))))))
 
     (define string-ends-with?
       (lambda (string-content end)

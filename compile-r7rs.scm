@@ -64,10 +64,22 @@
       (list-tail (command-line) 1))
     input-file))
 
-(define r6rs?  (if (and input-file
-                        (string-ends-with? input-file ".sps"))
-                 #t
-                 #f))
+(define single-library-input-file
+  (let ((input-file #f))
+    (for-each
+      (lambda (item)
+        (when (or (string-ends-with? item ".sld")
+                  (string-ends-with? item ".sls"))
+          (set! input-file item)))
+      (list-tail (command-line) 1))
+    input-file))
+
+(define r6rs?
+  (if (and input-file
+           (or (string-ends-with? input-file ".sps")
+               (string-ends-with? input-file ".sls")))
+    #t
+    #f))
 
 (define output-file
   (if (member "-o" (command-line))
@@ -126,13 +138,15 @@
       result)))
 
 (define library-files
-  (apply append
-         (map
-           (lambda (directory)
-             (if (file-exists? directory)
-               (search-library-files directory)
-               (list)))
-           (append prepend-directories append-directories))))
+  (cond (single-library-input-file (list single-library-input-file))
+        (else
+          (apply append
+                 (map
+                   (lambda (directory)
+                     (if (file-exists? directory)
+                       (search-library-files directory)
+                       (list)))
+                   (append prepend-directories append-directories))))))
 
 (define scheme-type (cdr (assoc 'type (cdr (assoc scheme data)))))
 
@@ -171,27 +185,33 @@
 (newline)
 
 ; Compile libraries
-(cond ((assoc 'library-command (cdr (assoc scheme data)))
-       (for-each
-         (lambda (file)
-           (let* ((library-command (scheme-library-command file)))
-             (display "Compiling library ")
-             (display file)
-             (newline)
-             (display "With command      ")
-             (display library-command)
-             (newline)
-             (display "Exit code         ")
-             (let ((output (c-system (pffi-string->pointer library-command))))
-               (when (not (= output 0))
-                 (error "Problem compiling libraries, exiting" output))
-               (display output))
-             (newline)
-             (newline)))
-         library-files))
-      (else
-        (display "Implementation has no library build command, skipping library compilation.")
-        (newline)))
+(when (not (null? library-files))
+  (if single-library-input-file
+    (display "Given library file: ")
+    (display "Found library files: "))
+  (display library-files)
+  (newline)
+  (cond ((assoc 'library-command (cdr (assoc scheme data)))
+         (for-each
+           (lambda (file)
+             (let* ((library-command (scheme-library-command file)))
+               (display "Compiling library ")
+               (display file)
+               (newline)
+               (display "With command      ")
+               (display library-command)
+               (newline)
+               (display "Exit code         ")
+               (let ((output (c-system (pffi-string->pointer library-command))))
+                 (when (not (= output 0))
+                   (error "Problem compiling libraries, exiting" output))
+                 (display output))
+               (newline)
+               (newline)))
+           library-files))
+        (else
+          (display "Implementation has no library build command, skipping library compilation.")
+          (newline))))
 
 ; Create executable file
 (when (and (equal? scheme-type 'interpreter) input-file)

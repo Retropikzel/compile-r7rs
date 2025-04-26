@@ -15,6 +15,10 @@ Despite it's name it also supports R6RS. Schemers, unite! <3
     - [Linux](#installation-linux)
     - [Windows](#installation-windows)
 - [Usage](#usage)
+    - [Chicken](#usage-chicken)
+    - [Mosh](#usage-mosh)
+    - [mit-scheme](#usage-mit-scheme)
+    - [Compiling a single library](#usage-compiling-single-library)
     - [Environment variables](#usage-environment-variables)
 - [Usage with docker](#usage-with-docker)
 - [Usual RnRS project](#usual-rnrs-project)
@@ -244,6 +248,52 @@ No other file suffixes are supported at the moment.
 
 Setting value of COMPILE\_R7RS to implementation name that supports only r7rs
 and input file to .sps file and other way around is undefined behaviour.
+
+### Chicken
+<a name="#usage-chicken"></a>
+
+To run executable at place set LD\_LIBRARY\_PATH=. (executable directory)
+before running it. For example:
+
+    LD\_LIBRARY\_PATH=. ./test
+
+If you are using Chicken you should propably read the next section too, you
+will most propably run into it soon.
+
+### Mosh
+<a name="#usage-mosh"></a>
+
+Only allows one loadpath. No workarounds exist currently in compile-r7rs.
+
+### mit-scheme
+<a name="#usage-mit-scheme"></a>
+
+Only allows one loadpath. Workaround in compile-r7rs is that each library is
+loaded individually, like so:
+
+    mit-scheme --load foo/bar.sld --load foo/baz.sld ... main.scm
+
+This does not require actions from the user and is done automatically.
+
+### Compiling a single library
+<a name="#usage-compiling-a-single-library"></a>
+
+Sometimes implementations need the libraries compiled in certain order,
+specially the compilers. Since doing analysing from the files about which
+library depends on which library I've decided to outsource it to you. :)
+
+To compile single library run the same command (including all the arguments
+other than -o)
+you would run for executable, except change the input file to the library.
+
+Example of compiling main program:
+
+    COMPILE_R7RS=<implementation name> compile-r7rs -I . -o main main.scm
+
+And if the main program needed library called foo/bar.sld, and the compile-r7rs
+tried to compile them in wrong order you would run:
+
+    COMPILE_R7RS=<implementation name> compile-r7rs -I . foo/bar.sld
 
 ### Environment variables
 <a name="#usage-environment-variables"></a>

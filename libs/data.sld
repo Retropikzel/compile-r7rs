@@ -4,8 +4,8 @@
           (scheme write)
           (scheme file)
           (scheme process-context)
-          (libs util)
-          (srfi 170))
+          (srfi 170)
+          (libs util))
   (export data)
   (begin
     (define data
@@ -51,15 +51,22 @@
                                                        " "
                                                        "-o"
                                                        " "
-                                                       ,@(map (lambda (item)
-                                                                (if (string-starts-with? library-file item)
-                                                                  (string-append (string-replace (string-copy (string-cut-from-end library-file 4)
-                                                                                                              (+ (string-length item) 1))
-                                                                                                 #\/
-                                                                                                 #\.)
-                                                                                 ".so")
-                                                                  ""))
-                                                              (append prepend-directories append-directories))
+                                                       ,(let ((result #f))
+                                                          (map (lambda (item)
+                                                                 (when (and (not result)
+                                                                            (string-starts-with? (real-path library-file)
+                                                                                                 (real-path item)))
+                                                                   (set! result (string-append (string-replace (string-copy (string-cut-from-end library-file 4)
+                                                                                                                            (+ (string-length item) 1))
+                                                                                                               #\/
+                                                                                                               #\.)
+                                                                                               ".so"))))
+                                                               (append prepend-directories append-directories))
+                                                          (write result)
+                                                          (newline)
+                                                          (if result
+                                                            result
+                                                            (error "Could not deduct library output path" library-file)))
                                                        " "
                                                        ,library-file))))
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
@@ -371,16 +378,20 @@
           (type . interpreter)
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
                         (apply string-append
-                               `("mosh"
+                               `("MOSH_LOAD_PATH="
+                                 ,@(map (lambda (item)
+                                          (string-append item ":"))
+                                        prepend-directories)
+                                 ,@(map (lambda (item)
+                                          (string-append item ":"))
+                                        append-directories)
+                                 " "
+                                 "mosh"
                                  " "
                                  ,(util-getenv "COMPILE_R7RS_MOSH")
                                  " "
-                                 ,@(map (lambda (item)
-                                          (string-append "--loadpath=" item " "))
-                                        prepend-directories)
-                                 ,@(map (lambda (item)
-                                          (string-append "--loadpath=" item " "))
-                                        append-directories)
+                                 ;,@(map (lambda (item) (string-append "--loadpath=" item " ")) prepend-directories)
+                                 ;,@(map (lambda (item) (string-append "--loadpath=" item " ")) append-directories)
                                  " "
                                  ,input-file)))))
         (picrin
