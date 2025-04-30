@@ -187,11 +187,9 @@
                                  ,input-file)))))
         (gerbil
           (type . compiler)
-          (library-command . ,(lambda (library-file prepend-directories append-directories r6rs?)
+          #;(library-command . ,(lambda (library-file prepend-directories append-directories r6rs?)
                                 (apply string-append
                                        `("gxc"
-                                         " "
-                                         "-O"
                                          " "
                                         ,(util-getenv "COMPILE_R7RS_GERBIL")
                                         " "
@@ -202,7 +200,11 @@
                                  " "
                                  ,(util-getenv "COMPILE_R7RS_GERBIL")
                                  " "
+                                 "-prelude \":scheme/r7rs\""
+                                 " "
                                  "-exe"
+                                 " "
+                                 "-static"
                                  " "
                                  ,@(map (lambda (item) (string-append item "/ ")) prepend-directories)
                                  ,@(map (lambda (item) (string-append item "/ ")) append-directories)
@@ -294,7 +296,7 @@
                                  " "
                                  ,(util-getenv "COMPILE_R7RS_KAWA")
                                  " "
-                                 "-Dkawa.import.path="
+                                 "-Dkawa.import.path=.:"
                                  ,@(map (lambda (item)
                                           (string-append item "/*.sld:"))
                                         (append prepend-directories append-directories))
@@ -378,20 +380,16 @@
           (type . interpreter)
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
                         (apply string-append
-                               `("MOSH_LOAD_PATH="
-                                 ,@(map (lambda (item)
-                                          (string-append item ":"))
-                                        prepend-directories)
-                                 ,@(map (lambda (item)
-                                          (string-append item ":"))
-                                        append-directories)
+                               `(;"MOSH_LOAD_PATH="
+                                 ;,@(map (lambda (item) (string-append item ":")) prepend-directories)
+                                 ;,@(map (lambda (item) (string-append item ":")) append-directories)
                                  " "
                                  "mosh"
                                  " "
                                  ,(util-getenv "COMPILE_R7RS_MOSH")
                                  " "
-                                 ;,@(map (lambda (item) (string-append "--loadpath=" item " ")) prepend-directories)
-                                 ;,@(map (lambda (item) (string-append "--loadpath=" item " ")) append-directories)
+                                 ,@(map (lambda (item) (string-append "--loadpath=" item " ")) prepend-directories)
+                                 ,@(map (lambda (item) (string-append "--loadpath=" item " ")) append-directories)
                                  " "
                                  ,input-file)))))
         (picrin

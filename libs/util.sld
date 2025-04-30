@@ -12,7 +12,8 @@
           path->filename
           change-file-suffix
           string-join
-          util-getenv)
+          util-getenv
+          dirname)
   (begin
 
     (define util-getenv
@@ -20,6 +21,14 @@
         (if (get-environment-variable name)
           (get-environment-variable name)
           "")))
+
+    (define dirname
+      (lambda (path)
+        (letrec ((looper (lambda (dirpath)
+                           (cond ((= (string-length dirpath) 0) dirpath)
+                                 ((char=? (string-ref dirpath 0) #\/) (string-copy dirpath 1))
+                                 (else (looper (string-copy dirpath 1)))))))
+          (string-reverse (looper (string-reverse path))))))
 
     (define string-replace
       (lambda (string-content replace with)
