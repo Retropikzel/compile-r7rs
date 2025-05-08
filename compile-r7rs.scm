@@ -6,6 +6,7 @@
         (retropikzel pffi)
         (libs util)
         (libs data)
+        (libs library-util)
         (srfi 170))
 
 (when (member "--list-schemes" (command-line))
@@ -110,6 +111,17 @@
                                  result))))))
     (looper (command-line) (list))))
 
+(when (member "--library-dependencies" (command-line))
+  (write (library-dependencies scheme
+                               (append prepend-directories append-directories)
+                               (if input-file
+                                 input-file
+                                 single-library-input-file)
+                               (list)
+                               (list)))
+  (newline)
+  (exit 0))
+
 (cond-expand
   (windows (pffi-define-library c-stdlib '("stdlib.h") "ucrtbase"))
   (else (pffi-define-library c-stdlib
@@ -119,7 +131,7 @@
 
 (pffi-define c-system c-stdlib 'system 'int '(pointer))
 
-(define search-library-files
+#;(define search-library-files
   (lambda (directory)
     (let ((result (list)))
       (for-each
@@ -137,7 +149,7 @@
         (directory-files directory))
       result)))
 
-(define library-files
+#;(define library-files
   (cond (single-library-input-file (list single-library-input-file))
         (else
           (apply append
@@ -147,6 +159,14 @@
                        (search-library-files directory)
                        (list)))
                    (append prepend-directories append-directories))))))
+
+(define library-files (library-dependencies scheme
+                               (append prepend-directories append-directories)
+                               (if input-file
+                                 input-file
+                                 single-library-input-file)
+                               (list)
+                               (list)))
 
 (define scheme-type (cdr (assoc 'type (cdr (assoc scheme data)))))
 

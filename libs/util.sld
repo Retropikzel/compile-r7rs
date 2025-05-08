@@ -1,6 +1,7 @@
 (define-library
   (libs util)
   (import (scheme base)
+          (scheme file)
           (scheme process-context)
           (retropikzel pffi))
   (export string-replace
@@ -13,7 +14,8 @@
           change-file-suffix
           string-join
           util-getenv
-          dirname)
+          dirname
+          search-library-file)
   (begin
 
     (define util-getenv
@@ -34,7 +36,7 @@
       (lambda (string-content replace with)
         (string-map (lambda (c)
                       (if (char=? c replace)
-                      with c))
+                        with c))
                     string-content)))
 
     (define string-replace-one
@@ -46,14 +48,14 @@
                           with c))
                       string-content))))
 
-     (define string-replace-one-from-end
-       (lambda (string-content replace with)
-         (let ((replaced? #f))
-           (list->string (reverse (map (lambda (c)
-                                         (if (and (not replaced?)
-                                                  (char=? c replace))
-                                           with c))
-                                       (reverse (string->list string-content))))))))
+    (define string-replace-one-from-end
+      (lambda (string-content replace with)
+        (let ((replaced? #f))
+          (list->string (reverse (map (lambda (c)
+                                        (if (and (not replaced?)
+                                                 (char=? c replace))
+                                          with c))
+                                      (reverse (string->list string-content))))))))
 
     (define string-ends-with?
       (lambda (string-content end)
@@ -79,7 +81,7 @@
       (lambda (string-content cut-length)
         (string-copy string-content
                      0
-                     (- (string-length string-content) 4))))
+                     (- (string-length string-content) cut-length))))
 
 
     (define string-find
@@ -126,4 +128,15 @@
                      (cond ((= index 0) item)
                            ((= index size) item)
                            (else (string-append item between))))
-                   string-list)))))))
+                   string-list)))))
+
+    (define search-library-file
+      (lambda (directories path)
+        (let ((result path))
+          (for-each
+            (lambda (directory)
+              (let ((full-path (string-append directory "/" path)))
+                (when (file-exists? full-path)
+                  (set! result full-path))))
+            directories)
+          result)))))

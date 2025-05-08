@@ -45,30 +45,21 @@
         (chicken
           (type . compiler)
           (library-command . ,(lambda (library-file prepend-directories append-directories r6rs?)
-                                (apply string-append `("csc -R r7rs -X r7rs -s -J"
-                                                       " "
-                                                       ,(util-getenv "COMPILE_R7RS_CHICKEN")
-                                                       " "
-                                                       "-o"
-                                                       " "
-                                                       ,(let ((result #f))
-                                                          (map (lambda (item)
-                                                                 (when (and (not result)
-                                                                            (string-starts-with? (real-path library-file)
-                                                                                                 (real-path item)))
-                                                                   (set! result (string-append (string-replace (string-copy (string-cut-from-end library-file 4)
-                                                                                                                            (+ (string-length item) 1))
-                                                                                                               #\/
-                                                                                                               #\.)
-                                                                                               ".so"))))
-                                                               (append prepend-directories append-directories))
-                                                          (write result)
-                                                          (newline)
-                                                          (if result
-                                                            result
-                                                            (error "Could not deduct library output path" library-file)))
-                                                       " "
-                                                       ,library-file))))
+                                (let* ((out (string-append (if (string-starts-with? library-file "srfi")
+                                                             (string-replace (string-cut-from-end library-file 4) #\/ #\-)
+                                                             (string-replace (string-cut-from-end library-file 4) #\/ #\.))
+                                                           ".so")))
+                                  (apply string-append `("csc -R r7rs -X r7rs -s -J"
+                                                         " "
+                                                         ,(util-getenv "COMPILE_R7RS_CHICKEN")
+                                                         " "
+                                                         "-o"
+                                                         " "
+                                                         ,out
+                                                         " "
+                                                         ,(search-library-file (append prepend-directories
+                                                                                       append-directories)
+                                                                               library-file))))))
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
                         (apply string-append `("csc -R r7rs -X r7rs"
                                                " "
