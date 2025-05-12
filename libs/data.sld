@@ -132,17 +132,35 @@
         (gambit
           (type . compiler)
           (library-command . ,(lambda (library-file prepend-directories append-directories r6rs?)
-                                (apply string-append
-                                       `("gsc -obj"
-                                         " "
-                                         ,(util-getenv "COMPILE_R7RS_GAMBIT")
-                                         " "
-                                         ,library-file))))
+                                (let ((out (string-append (string-cut-from-end library-file 4) ".o"))
+                                      (static-out (string-append (string-cut-from-end library-file 4) ".a")))
+                                  (apply string-append
+                                         `("gsc -obj"
+                                           " "
+                                           ,(util-getenv "COMPILE_R7RS_GAMBIT")
+                                           " "
+                                           ,(string-cut-from-end library-file 4))))))
           (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
-                        (apply string-append
+                        (apply string-append `("gsc"
+                                              " "
+                                              ,(util-getenv "COMPILE_R7RS_GAMBIT")
+                                              " "
+                                              "-:search="
+                                              ,@(map (lambda (item)
+                                                       (string-append item ""))
+                                                     (append prepend-directories append-directories))
+                                              " "
+                                              "-o"
+                                              " "
+                                              ,output-file
+                                              " "
+                                              "-exe -nopreload"
+                                              " "
+                                              ,input-file))
+                        #;(apply string-append
                                `("echo '#!/usr/bin/env -S gsi-script -f -:search="
                                  ,@(map (lambda (item)
-                                          (string-append item "/"))
+                                          (string-append item "/:"))
                                         (append prepend-directories append-directories))
                                  "'"
                                  " "
@@ -349,6 +367,7 @@
     (loko
       (type . compiler)
       (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
+                    (let ((out (string-cut-from-end output-file 4)))
                     (apply string-append
                            `("LOKO_LIBRARY_PATH="
                              ,@(map (lambda (item)
@@ -366,7 +385,15 @@
                              " "
                              "--compile"
                              " "
-                             ,input-file)))))
+                             ,input-file
+                             " "
+                             "&&"
+                             " "
+                             "mv"
+                             " "
+                             ,out
+                             " "
+                             ,output-file))))))
     (meevax
       (type . interpreter)
       (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
@@ -590,11 +617,17 @@
                              " "
                              ,(if r6rs? "--r6rs" "--r7rs")
                              " "
+                             "--mute"
+                             " "
+                             "--quiet"
+                             " "
                              ,@(map (lambda (item)
                                       (string-append "--sitelib=" item " "))
                                     prepend-directories)
                              ,@(map (lambda (item)
                                       (string-append "--sitelib=" item " "))
                                     append-directories)
+                             " "
+                             "--top-level-program"
                              " "
                              ,input-file)))))))))
