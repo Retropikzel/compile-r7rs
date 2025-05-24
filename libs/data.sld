@@ -416,11 +416,9 @@
                              " "
                              ,(util-getenv "COMPILE_R7RS_MIT_SCHEME")
                              " "
-                             "--batch-mode"
-                             " "
                              ,@(map (lambda (item)
-                                      (string-append "--prepend-library " item " "))
-                                    (append prepend-directories append-directories))
+                                      (string-append "--load " item " "))
+                                    library-files)
                              " "
                              "--load"
                              " "
