@@ -368,7 +368,7 @@
     (loko
       (type . compiler)
       (command . ,(lambda (input-file output-file prepend-directories append-directories library-files r6rs?)
-                    (let ((out (string-cut-from-end output-file 4)))
+                    (let ((out (string-cut-from-end input-file 4)))
                     (apply string-append
                            `("LOKO_LIBRARY_PATH="
                              ,@(map (lambda (item)
