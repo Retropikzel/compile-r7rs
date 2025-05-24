@@ -88,7 +88,8 @@
                                                         (string-append "-uses "
                                                                        (if (string-starts-with? library-file "srfi")
                                                                          (string-replace (string-cut-from-end library-file 4) #\/ #\-)
-                                                                         (string-replace (string-cut-from-end library-file 4) #\/ #\.))))
+                                                                         (string-replace (string-cut-from-end library-file 4) #\/ #\.))
+                                                                       " "))
                                                       library-files)
                                                " "
                                                "-output-file"
