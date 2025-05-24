@@ -71,6 +71,7 @@
                                                          ,(search-library-file (append prepend-directories
                                                                                        append-directories)
                                                                                library-file)
+                                                         " "
                                                          "&&"
                                                          " "
                                                          "ar rcs"
