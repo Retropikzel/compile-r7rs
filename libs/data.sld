@@ -128,8 +128,6 @@
                                           (string-append "-A" " " item " "))
                                         append-directories)
                                  " "
-                                 "-l"
-                                 " "
                                  ,input-file)))))
         (gambit
           (type . compiler)
