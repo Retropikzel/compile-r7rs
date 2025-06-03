@@ -171,13 +171,14 @@
 (define scheme-type (cdr (assoc 'type (cdr (assoc scheme data)))))
 
 (define scheme-command
-  (apply (cdr (assoc 'command (cdr (assoc scheme data))))
-         (list (if input-file input-file "")
-               (if output-file output-file "")
-               prepend-directories
-               append-directories
-               library-files
-               r6rs?)))
+  (string-append (apply (cdr (assoc 'command (cdr (assoc scheme data))))
+                        (list (if input-file input-file "")
+                              (if output-file output-file "")
+                              prepend-directories
+                              append-directories
+                              library-files
+                              r6rs?))
+                 (string #\newline)))
 
 (define scheme-library-command
   (lambda (library-file)

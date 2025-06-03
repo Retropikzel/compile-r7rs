@@ -58,6 +58,10 @@
                                                                  ".a")))
                                   (apply string-append `("csc -R r7rs -X r7rs -static -c -J"
                                                          " "
+                                                        ,@(map (lambda (item)
+                                                                 (string-append "-I " item " "))
+                                                               (append append-directories prepend-directories))
+                                                         " "
                                                          "-unit"
                                                          " "
                                                          ,unit
@@ -68,9 +72,7 @@
                                                          " "
                                                          ,(util-getenv "COMPILE_R7RS_CHICKEN")
                                                          " "
-                                                         ,(search-library-file (append prepend-directories
-                                                                                       append-directories)
-                                                                               library-file)
+                                                         ,(search-library-file (append prepend-directories append-directories) library-file)
                                                          " "
                                                          "&&"
                                                          " "
@@ -84,6 +86,10 @@
                         (apply string-append `("csc -R r7rs -X r7rs -static"
                                                " "
                                                ,(util-getenv "COMPILE_R7RS_CHICKEN")
+                                               " "
+                                               ,@(map (lambda (item)
+                                                        (string-append "-I " item " "))
+                                                      (append append-directories prepend-directories))
                                                " "
                                                ,@(map (lambda (library-file)
                                                         (string-append "-uses "
