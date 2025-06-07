@@ -58,10 +58,6 @@
                                                                  ".a")))
                                   (apply string-append `("csc -R r7rs -X r7rs -static -c -J"
                                                          " "
-                                                        ,@(map (lambda (item)
-                                                                 (string-append "-I " item " "))
-                                                               (append append-directories prepend-directories))
-                                                         " "
                                                          "-unit"
                                                          " "
                                                          ,unit
