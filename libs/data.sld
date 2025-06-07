@@ -438,8 +438,8 @@
                              " "
                              ,(util-getenv "COMPILE_R7RS_MOSH")
                              " "
-                             ,@(map (lambda (item) (string-append "--loadpath=" item " ")) prepend-directories)
-                             ,@(map (lambda (item) (string-append "--loadpath=" item " ")) append-directories)
+                             ,@(map (lambda (item) (string-append "--loadpath=" item " "))
+                                    (append append-directories prepend-directories))
                              " "
                              ,input-file)))))
     (picrin
@@ -460,7 +460,11 @@
     (racket
       (type . interpreter)
       (library-command . ,(lambda (library-file prepend-directories append-directories r6rs?)
-                            (let ((library-rkt-file (change-file-suffix library-file ".rkt")))
+                            (let* ((full-path (search-library-file (append append-directories
+                                                                          prepend-directories)
+                                                                  library-file))
+                                   (library-rkt-file (change-file-suffix full-path ".rkt"))
+                                  )
                               (apply string-append
                                      `("printf"
                                        " "
