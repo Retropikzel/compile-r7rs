@@ -10,7 +10,6 @@ pipeline {
             buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
     }
     stages {
-
         stage('Test R6RS implementations') {
             steps {
                 script {
