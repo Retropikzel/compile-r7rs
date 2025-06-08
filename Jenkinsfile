@@ -15,20 +15,18 @@ pipeline {
             steps {
                 script {
                     r6rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r6rs-schemes'
-                    r7rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r7rs-schemes'
+                        r7rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r7rs-schemes'
                 }
             }
         }
 
-        stages {
-            stage('Test R6RS implementations') {
-                steps {
-                    script {
-                        r6rs_implementations.each { implementation->
-                            stage("${implementation} ${test}") {
-                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                    sh "make test-r6rs COMPILE_R7RS=${implementation}"
-                                }
+        stage('Test R6RS implementations') {
+            steps {
+                script {
+                    r6rs_implementations.each { implementation->
+                        stage("${implementation} ${test}") {
+                            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                                sh "make test-r6rs COMPILE_R7RS=${implementation}"
                             }
                         }
                     }
