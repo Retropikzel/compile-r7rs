@@ -1,5 +1,5 @@
 ARG COMPILE_R7RS=chibi
-FROM debian:bookworm AS build
+FROM schemers/sagittarius AS build
 
 RUN apt-get update && apt-get install -y wget build-essential make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev
 RUN wget https://github.com/ktakashi/sagittarius-scheme/archive/refs/tags/version_0.9.12.tar.gz && tar -xf version_0.9.12.tar.gz
