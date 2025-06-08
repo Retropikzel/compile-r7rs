@@ -3,9 +3,8 @@
   (import (scheme base)
           (scheme write)
           (scheme file)
-          (retropikzel pffi)
-          (scheme process-context)
-          )
+          (foreign c)
+          (scheme process-context))
   (export ;posix-error?
           ;posix-error-name
           ;posix-error-message
@@ -36,7 +35,7 @@
           file-info:atime
           file-info:mtime
           file-info:ctime
-          file-info-directory?
+          ;file-info-directory?
           ;file-info-fifo?
           ;file-info-symlink?
           ;file-info-regular?

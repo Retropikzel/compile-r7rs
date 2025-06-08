@@ -5,8 +5,8 @@ build:
 
 snow:
 	mkdir -p snow
-	cp -r ../r7rs-pffi/retropikzel snow/
-	cp -r ../pffi-srfi-170/srfi snow/
+	cp -r ../foreign-c/foreign snow/
+	cp -r ../foreign-c-srfi-170/srfi snow/
 
 # Does uninstall because without that the changes do not seem to update
 install: uninstall

@@ -3,7 +3,7 @@
         (scheme read)
         (scheme write)
         (scheme process-context)
-        (retropikzel pffi)
+        (foreign c)
         (libs util)
         (libs data)
         (libs library-util)
@@ -123,13 +123,13 @@
   (exit 0))
 
 (cond-expand
-  (windows (pffi-define-library c-stdlib '("stdlib.h") "ucrtbase"))
-  (else (pffi-define-library c-stdlib
+  (windows (define-c-library c-stdlib '("stdlib.h") "ucrtbase"))
+  (else (define-c-library c-stdlib
                              '("stdlib.h")
                              "c"
                              '((additional-versions ("6"))))))
 
-(pffi-define c-system c-stdlib 'system 'int '(pointer))
+(define-c-procedure c-system c-stdlib 'system 'int '(pointer))
 
 #;(define search-library-files
   (lambda (directory)
@@ -223,7 +223,7 @@
                (display library-command)
                (newline)
                (display "Exit code         ")
-               (let ((output (c-system (pffi-string->pointer library-command))))
+               (let ((output (c-system (string->c-utf8 library-command))))
                  (when (not (= output 0))
                    (error "Problem compiling libraries, exiting" output))
                  (display output))
@@ -258,7 +258,7 @@
              (display "start")))
       (display scheme-command)))
   (cond ((string=? compilation-target "unix")
-         (c-system (pffi-string->pointer (string-append "chmod +x " output-file))))))
+         (c-system (string->c-utf8 (string-append "chmod +x " output-file))))))
 
 (when (and (equal? scheme-type 'compiler) input-file)
   (when (and output-file (file-exists? output-file))
@@ -270,6 +270,6 @@
   (display scheme-command)
   (newline)
   (display "Exit code         ")
-  (display (c-system (pffi-string->pointer scheme-command)))
+  (display (c-system (string->c-utf8 scheme-command)))
   (newline))
 
