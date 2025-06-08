@@ -11,18 +11,12 @@ pipeline {
     }
     stages {
 
-        stage("Get implementation lists") {
+        stage('Test R6RS implementations') {
             steps {
                 script {
                     def r6rs_implementations = sh script: 'sash -L ./snow -L . compile-r7rs.scm --list-r6rs-schemes', returnStdout: true
                     def r7rs_implementations = sh script: 'sash -L ./snow -L . compile-r7rs.scm --list-r7rs-schemes', returnStdout: true
-                }
-            }
-        }
 
-        stage('Test R6RS implementations') {
-            steps {
-                script {
                     r6rs_implementations.each { implementation->
                         stage("${implementation}") {
                             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
