@@ -4,7 +4,8 @@
   (import (scheme base)
           (scheme write)
           (scheme file)
-          (retropikzel r7rs-pffi))
+          (foreign c)
+          (scheme process-context))
   (export ;posix-error?
           ;posix-error-name
           ;posix-error-message
@@ -35,7 +36,7 @@
           file-info:atime
           file-info:mtime
           file-info:ctime
-          file-info-directory?
+          ;file-info-directory?
           ;file-info-fifo?
           ;file-info-symlink?
           ;file-info-regular?
@@ -47,7 +48,7 @@
           ;open-directory
           ;read-directory
           ;close-directory
-          ;real-path
+          real-path
           ;file-space
           ;temp-file-prefix
           ;create-temp-file
@@ -82,4 +83,4 @@
           ;delete-environment-variable!
           ;terminal?
           )
-    (include "170.scm"))
+  (include "170.scm"))

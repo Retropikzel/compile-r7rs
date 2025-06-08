@@ -3,7 +3,7 @@
   (import (scheme base)
           (scheme file)
           (scheme process-context)
-          (retropikzel pffi))
+          (foreign c))
   (export string-replace
           string-ends-with?
           string-starts-with?
