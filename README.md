@@ -232,7 +232,15 @@ The environment variable COMPILE\_R7RS must be set to the **name** of the
 implementation as specified in the support list.
 **This differs from the SRFI** as the SRFI excepts a path.
 
-To get the list of supported implementations run:
+To get the list of supported R6RS implementations run:
+
+    compile-r7rs --list-r6rs-schemes
+
+To get the list of supported R7RS implementations run:
+
+    compile-r7rs --list-r7rs-schemes
+
+To get the list of all supported implementations run:
 
     compile-r7rs --list-schemes
 
@@ -313,6 +321,10 @@ tried to compile them in wrong order you would run:
 
 ## Usage with Docker
 <a name="#usage-with-docker"></a>
+
+You can compile the docker images with:
+
+    make build-docker-images
 
 Here is a sample Dockerfile to get you started.
 

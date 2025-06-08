@@ -3,6 +3,20 @@ PREFIX=/usr/local
 build:
 	printf "#!/bin/sh\nsash --disable-cache -r7 -L ${PREFIX}/lib/compile-r7rs/snow ${PREFIX}/lib/compile-r7rs/main.scm \"\$$@\"\n" > compile-r7rs
 
+build-docker-images:
+	for implementation in $(shell sash -L ./snow -L . compile-r7rs.scm --list-schemes); \
+		do \
+		docker build . --build-arg COMPILE_R7RS=$${implementation} --tag=retropikzel1/compile-r7rs:$${implementation}; \
+		done
+
+#for implementation in $(shell sash -L ./snow -L . compile-r7rs.scm --list-schemes);
+
+push-docker-images:
+	for implementation in chibi chicken sagittarius; \
+		do \
+		docker push compile-r7rs:$${implementation}; \
+		done
+
 snow:
 	mkdir -p snow
 	cp -r ../foreign-c/foreign snow/

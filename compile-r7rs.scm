@@ -9,39 +9,59 @@
         (libs library-util)
         (srfi 170))
 
+(define r6rs-schemes '(chezscheme
+                       guile
+                       ikarus
+                       ironscheme
+                       larceny
+                       loko
+                       mosh
+                       racket
+                       sagittarius
+                       ypsilon))
+(define r7rs-schemes '(chibi
+                       chicken
+                       cyclone
+                       gambit
+                       foment
+                       gauche
+                       guile
+                       kawa
+                       larceny
+                       loko
+                       mit-scheme
+                       mosh
+                       racket
+                       sagittarius
+                       skint
+                       stklos
+                       tr7
+                       ypsilon))
+
+(define all-schemes (append r6rs-schemes r7rs-schemes))
+
+(when (member "--list-r6rs-schemes" (command-line))
+  (for-each
+    (lambda (scheme)
+      (display scheme)
+      (newline))
+    r6rs-schemes)
+  (exit 0))
+
+(when (member "--list-r7rs-schemes" (command-line))
+  (for-each
+    (lambda (scheme)
+      (display scheme)
+      (newline))
+    r7rs-schemes)
+  (exit 0))
+
 (when (member "--list-schemes" (command-line))
   (for-each
     (lambda (scheme)
       (display scheme)
       (newline))
-    '(chezscheme
-       chibi
-       chicken
-       cyclone
-       gambit
-       foment
-       gauche
-       ;gerbil
-       guile
-       ;husk
-       ikarus
-       ironscheme
-       kawa
-       larceny
-       loko
-       ;meevax
-       mit-scheme
-       mosh
-       racket
-       ;picrin
-       ;scheme-rs
-       ;stak
-       sagittarius
-       skint
-       stklos
-       tr7
-       ;vicare
-       ypsilon))
+    all-schemes)
   (exit 0))
 
 (define scheme (if (get-environment-variable "COMPILE_R7RS")
