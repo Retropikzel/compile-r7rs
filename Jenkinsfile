@@ -19,7 +19,7 @@ pipeline {
                     r6rs_implementations.each { implementation->
                         stage("${implementation}") {
                             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                sh "make test-r6rs COMPILE_R7RS=${implementation}"
+                                sh "make test-r6rs-docker COMPILE_R7RS=${implementation}"
                             }
                         }
                     }
