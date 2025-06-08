@@ -14,8 +14,8 @@ pipeline {
         stage("Get implementation lists") {
             steps {
                 script {
-                    r6rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r6rs-schemes'
-                        r7rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r7rs-schemes'
+                    r6rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r6rs-schemes', returnStdout: true
+                    r7rs_implementations = sh 'sash -L ./snow -L . compile-r7rs.scm --list-r7rs-schemes', returnStdout: true
                 }
             }
         }
