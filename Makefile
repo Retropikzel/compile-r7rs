@@ -6,15 +6,17 @@ build:
 build-docker-images:
 	for implementation in $(shell sash -L ./snow -L . compile-r7rs.scm --list-schemes); \
 		do \
+		echo "Building $${implementation}"; \
 		docker build . --build-arg COMPILE_R7RS=$${implementation} --tag=retropikzel1/compile-r7rs:$${implementation}; \
 		done
 
 #for implementation in $(shell sash -L ./snow -L . compile-r7rs.scm --list-schemes);
 
 push-docker-images:
-	for implementation in chibi chicken sagittarius; \
+	for implementation in $(shell sash -L ./snow -L . compile-r7rs.scm --list-schemes); \
 		do \
-		docker push compile-r7rs:$${implementation}; \
+		echo "Pushing $${implementation}"; \
+		docker push retropikzel1/compile-r7rs:$${implementation}; \
 		done
 
 snow:

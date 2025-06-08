@@ -11,13 +11,17 @@ COPY compile-r7rs.scm .
 COPY snow/ snow/
 COPY libs/ libs/
 RUN ls -1
-RUN make && make install PREFIX=/usr/local-other
+RUN make PREFIX=/usr/local-other && make install PREFIX=/usr/local-other
 
 FROM schemers/${COMPILE_R7RS}
 RUN apt-get update && apt-get install -y \
     build-essential \
     make \
+    libfcgi-dev \
+    sqlite3 \
+    libsqlite3-dev \
     libffi8 \
+    libffi-dev \
     libgc1 \
     libssl3 \
     libuv1
