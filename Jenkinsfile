@@ -26,5 +26,21 @@ pipeline {
                 }
             }
         }
+
+        stage('Test R7RS implementations') {
+            steps {
+                script {
+                    def r7rs_implementations = sh(script: 'sash -L ./snow -L . compile-r7rs.scm --list-r7rs-schemes', returnStdout: true).split()
+
+                    r6rs_implementations.each { implementation->
+                        stage("${implementation}") {
+                            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                                sh "make test-r7rs-docker COMPILE_R7RS=${implementation}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
