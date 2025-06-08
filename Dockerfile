@@ -1,8 +1,10 @@
 ARG COMPILE_R7RS=chibi
 FROM debian:bookworm AS build
-RUN apt-get update && apt-get install -y build-essential wget make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev
-RUN wget https://bitbucket.org/ktakashi/sagittarius-scheme/downloads/sagittarius-0.9.12.tar.gz && tar -xf sagittarius-0.9.12.tar.gz
-RUN cd sagittarius-0.9.12 && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install
+
+RUN apt-get update && apt-get install -y wget build-essential make cmake libgc-dev zlib1g-dev libffi-dev libssl-dev
+RUN wget https://github.com/ktakashi/sagittarius-scheme/archive/refs/tags/version_0.9.12.tar.gz && tar -xf version_0.9.12.tar.gz
+RUN cd sagittarius-scheme-version_0.9.12 && ./dist.sh gen && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local-other .. && make && make install
+
 WORKDIR /workdir
 COPY Makefile .
 COPY compile-r7rs.scm .
