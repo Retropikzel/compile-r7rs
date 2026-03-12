@@ -2,7 +2,7 @@
 # vi: ft=bash
 set -eu
 if [ "${COMPILE_R7RS:-}" = "" ]; then
-    echo "Environment variable COMPILE_R7RS is not set. Supported values:"
+    echo "COMPILE_R7RS not set, possible values:"
     echo "capyscheme chezscheme chibi chicken cyclone foment gambit gauche guile ikarus ironscheme kawa larceny loko meevax mosh mit-scheme racket sagittarius skint stklos tr7 ypsilon"
     exit 1
 fi
@@ -12,8 +12,8 @@ prepend_dirs=""
 append_dirs=""
 while :; do
 case ${1:-} in
-    *.sps) input_file="$1"; rnrs=r6rs; shift ;;
-    *.scm) input_file="$1"; rnrs=r7rs; shift ;;
+    *.sps) input_file="$1"; rnrs=R6RS; shift ;;
+    *.scm) input_file="$1"; rnrs=R7RS; shift ;;
     -o) output_file="$2"; shift; shift ;;
     -D) echo "Warning: -D not supported, so \"$1 $2\" is ignored"; shift; shift ;;
     -I) case $COMPILE_R7RS in
@@ -44,17 +44,15 @@ append_dirs="${append_dirs#:}"
 prepend_dirs="${prepend_dirs#,}"
 append_dirs="${append_dirs#,}"
 
-if [ "${input_file:-}" = "" ]; then echo "Error, no input file"; exit 1; fi
-
 case ${input_file:-} in
     *.sps) output_file="${input_file%.sps}";;
     *.scm) output_file="${input_file%.scm}";;
-    *) echo "Error, invalid input file";;
+    *) echo "Error, invalid input file"; exit 1;;
 esac
 
 prefix="#!/usr/bin/env -S"
 case $rnrs in
-    r6rs)
+    R6RS)
         case $COMPILE_R7RS in
             chezscheme) echo "$prefix scheme --libdirs $prepend_dirs:$append_dirs --program" >> "$output_file";;
             guile) printf "$prefix guile --r6rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
@@ -67,9 +65,9 @@ case $rnrs in
             racket) printf "\n#|\nexec racket -I scheme/init -l r6rs/run.rkt $prepend_dirs $append_dirs \$0 --\n|#\n" >> "$output_file";;
             sagittarius) echo "$prefix sash -r6 $prepend_dirs $append_dirs" >> "$output_file";;
             ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" >> "$output_file";;
-            *) echo "Unsupported implementation: $COMPILE_R7RS"; exit 1;;
+            *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
-    r7rs)
+    R7RS)
         case $COMPILE_R7RS in
             chicken) csc -o "$output_file" "$input_file";;
             chibi) echo "$prefix chibi-scheme $prepend_dirs $append_dirs" >> "$output_file";;
@@ -91,7 +89,7 @@ case $rnrs in
             stklos) echo "$prefix stklos $prepend_dirs $append_dirs" >> "$output_file";;
             tr7) echo "$prefix TR7_LIB_PATH=$prepend_dirs:$append_dirs tr7i -1" >> "$output_file";;
             ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" >> "$output_file";;
-            *) echo "Unsupported implementation: $COMPILE_R7RS"; exit 1;;
+            *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
 esac
 
