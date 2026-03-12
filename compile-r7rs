@@ -3,7 +3,7 @@
 set -eu
 if [ "${COMPILE_R7RS:-}" = "" ]; then
     echo "COMPILE_R7RS not set, possible values:"
-    echo "capyscheme chezscheme chibi chicken cyclone foment gambit gauche guile ikarus ironscheme kawa larceny loko meevax mosh mit-scheme racket sagittarius skint stklos tr7 ypsilon"
+    echo "capyscheme chezscheme chibi chicken cyclone foment gauche guile ikarus ironscheme kawa larceny loko meevax mosh mit-scheme racket sagittarius skint stklos tr7 ypsilon"
     exit 1
 fi
 
@@ -20,6 +20,7 @@ case ${1:-} in
             chicken) prepend_dirs="" ;;
             chezscheme|ikarus|loko|mosh|tr7) prepend_dirs="$prepend_dirs:$2" ;;
             capyscheme|guile|sagittarius) prepend_dirs="$prepend_dirs -L $2" ;;
+            kawa) prepend_dirs="$prepend_dirs:$2/*.sld";;
             racket) prepend_dirs="$prepend_dirs -S $2" ;;
             ypsilon) prepend_dirs="$prepend_dirs --sitelib=$2" ;;
             *) prepend_dirs="$prepend_dirs -I $2" ;;
@@ -30,6 +31,7 @@ case ${1:-} in
             chezscheme|ikarus|loko|mosh|tr7) append_dirs="$append_dirs:$2" ;;
             guile) append_dirs="$append_dirs -L $2" ;;
             ironscheme) append_dirs="$append_dirs -I $2" ;;
+            kawa) append_dirs="$append_dirs:$2/*.sld";;
             racket) append_dirs="$append_dirs -S $2" ;;
             ypsilon) prepend_dirs="$prepend_dirs --sitelib=$2" ;;
             *) append_dirs="$append_dirs -A $2" ;;
@@ -73,10 +75,9 @@ case $rnrs in
             chibi) echo "$prefix chibi-scheme $prepend_dirs $append_dirs" >> "$output_file";;
             cyclone) cyclone -o "$output_file" $prepend_dirs $append_dirs "$input_file";;
             foment) echo "$prefix foment $prepend_dirs $append_dirs" >> "$output_file";;
-            gambit) gsc -exe -nopreload -o "$output_file" "$input_file";;
             gauche) echo "$prefix gosh -r7 $prepend_dirs $append_dirs" >> "$output_file";;
             guile) printf "$prefix guile --r7rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
-            kawa) echo "$prefix kawa --r7rs --full-tailcalls $prepend_dirs $append_dirs" >> "$output_file";;
+            kawa) echo "$prefix kawa -J--enable-native-access=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld" >> "$output_file";;
             larceny) printf "\n#|\nexec larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" >> "$output_file";;
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko -std=r7rs --compile "$input_file";
                   if [ ! "${input_file%.scm}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
@@ -94,7 +95,7 @@ case $rnrs in
 esac
 
 case $COMPILE_R7RS in
-    chicken|cyclone|gambit|loko) sleep 0;;
+    chicken|cyclone|loko) sleep 0;;
     *) cat "$input_file" >> "$output_file";;
 esac
 chmod +x "$output_file"

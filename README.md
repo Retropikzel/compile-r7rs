@@ -4,3 +4,28 @@ made with POSIX Shell.
 
 
 No support for -D yet.
+
+
+Supported implementations:
+- capyscheme
+- chezscheme
+- chibi
+- chicken
+- cyclone
+- foment
+- gauche
+- guile
+- ikarus
+- ironscheme
+- kawa
+- larceny
+- loko
+- meevax
+- mosh
+- mit-scheme
+- racket
+- sagittarius
+- skint
+- stklos
+- tr7
+- ypsilon
