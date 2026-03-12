@@ -3,10 +3,13 @@ Implementation of
 made with POSIX Shell.
 
 
-No support for -D yet.
+## Usage
+
+    COMPILE_R7RS=${SCHEME} compile-r7rs -o main -I libs -A other_libs main.scm
+    ./main
 
 
-Supported implementations:
+## Implementations
 - capyscheme
 - chezscheme
 - chibi
@@ -29,3 +32,6 @@ Supported implementations:
 - stklos
 - tr7
 - ypsilon
+
+## Misc
+- No support for -D yet.
