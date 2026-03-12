@@ -19,8 +19,13 @@ test:
 	@echo "(display \"Hello\") (newline)" >> .tmp/main.sps
 	@echo "(import (scheme base) (scheme write))" > .tmp/main.scm
 	@echo "(display \"Hello\") (newline)" >> .tmp/main.scm
+	@rm -rf .tmp/main
 	@if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -I libs -A other_libs main.sps; fi
 	@if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -I libs -A other_libs main.scm; fi
+	@cd .tmp && ./main
+	@rm -rf .tmp/main
+	@if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -I libs -A other_libs main.sps; fi
+	@if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -I libs -A other_libs main.scm; fi
 	@cd .tmp && ./main
 
 test-docker:
