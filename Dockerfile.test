@@ -1,0 +1,8 @@
+ARG SCHEME=chibi
+FROM docker.io/schemers/${SCHEME}
+ARG SCHEME=chibi
+ENV COMPILE_R7RS=${SCHEME}
+RUN apt-get update && apt-get install -y make
+COPY Makefile .
+COPY compile-r7rs .
+RUN install compile-r7rs /usr/local/bin/compile-r7rs
