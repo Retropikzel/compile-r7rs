@@ -19,8 +19,10 @@ test:
 	@mkdir -p .tmp/libs/foo
 	@mkdir -p .tmp/other_libs
 	@# R6RS testfiles
-	@printf "(import (rnrs) (foo bar))\n(baz)" > .tmp/main.sps
-	@printf "(library (foo bar) (export baz) (import (rnrs)) (define (baz) (display \"Hello from bar.sls\") (newline)))" > .tmp/libs/foo/bar.sls
+	@printf "#!r6rs\n(import (rnrs) (foo bar))\n(baz)" > .tmp/main.sps
+	@printf "#!r6rs\n(library (foo bar) (export baz) (import (rnrs)) (define (baz) (display \"Hello from bar.sls\") (newline)))" > .tmp/libs/foo/bar.sls
+	@# Racket compability testfiles
+	@printf "#lang r7rs (import (scheme base)) (include \"bar.sld\")" > .tmp/libs/foo/bar.rkt
 	@# R7RS testfiles
 	@printf "(import (scheme base) (scheme write) (foo bar))\n(baz)" > .tmp/main.scm
 	@printf "(define-library (foo bar) (import (scheme base) (scheme write)) (export baz) (include \"bar.scm\"))" > .tmp/libs/foo/bar.sld
