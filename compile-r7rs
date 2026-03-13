@@ -76,7 +76,7 @@ case $rnrs in
             chicken) csc -o "$output_file" "$input_file";;
             chibi) echo "$prefix chibi-scheme $prepend_dirs $append_dirs" >> "$output_file";;
             cyclone) cyclone -o "$output_file" $prepend_dirs $append_dirs "$input_file";;
-            foment) echo "$prefix foment $prepend_dirs $append_dirs" >> "$output_file";;
+            foment) echo "$prefix foment $prepend_dirs $append_dirs -A /usr/local/share/snow" >> "$output_file";;
             gauche) echo "$prefix gosh -r7 $prepend_dirs $append_dirs" >> "$output_file";;
             guile) printf "$prefix guile --r7rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
             kawa) echo "$prefix kawa -J--enable-native-access=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld" >> "$output_file";;
