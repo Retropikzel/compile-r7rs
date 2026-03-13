@@ -2,9 +2,6 @@ PREFIX=/usr/local
 SCHEME=chibi
 IMAGE=${SCHEME}:latest
 RNRS=r7rs
-ifeq "${SCHEME}" "sagittarius"
-IMAGE=${SCHEME}:head
-endif
 
 all: build
 
