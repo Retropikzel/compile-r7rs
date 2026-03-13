@@ -3,7 +3,7 @@
 set -eu
 if [ "${COMPILE_R7RS:-}" = "" ]; then
     echo "COMPILE_R7RS not set, possible values:"
-    echo "capyscheme chezscheme chibi chicken cyclone foment gauche guile ikarus ironscheme kawa larceny loko meevax mosh mit-scheme racket sagittarius skint stklos tr7 ypsilon"
+    echo "capyscheme chezscheme chibi chicken cyclone foment gauche guile ikarus ironscheme kawa larceny loko meevax mosh racket sagittarius skint stklos tr7 ypsilon"
     exit 1
 fi
 
@@ -84,7 +84,6 @@ case $rnrs in
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko -std=r7rs --compile "$input_file";
                   if [ ! "${input_file%.scm}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
             meevax) echo "$prefix meevax $prepend_dirs $append_dirs" >> "$output_file";;
-            mit-scheme) echo "$prefix mit-scheme --batch-mode $prepend_dirs $append_dirs" >> "$output_file";;
             mosh) echo "$prefix MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh" >> "$output_file";;
             racket) echo "$prefix racket -I r7rs $prepend_dirs $append_dirs --script" >> "$output_file";;
             sagittarius) echo "$prefix sash -r7 $prepend_dirs $append_dirs" >> "$output_file";;
