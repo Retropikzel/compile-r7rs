@@ -1,5 +1,6 @@
 PREFIX=/usr/local
 SCHEME=chibi
+IMAGE=${SCHEME}:latest
 RNRS=r7rs
 
 all: build
@@ -20,16 +21,12 @@ test:
 	@echo "(import (scheme base) (scheme write))" > .tmp/main.scm
 	@echo "(display \"Hello\") (newline)" >> .tmp/main.scm
 	@rm -rf .tmp/main
-	@if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -I libs -A other_libs main.sps; fi
-	@if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -I libs -A other_libs main.scm; fi
-	@cd .tmp && ./main
-	@rm -rf .tmp/main
-	@if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -I libs -A other_libs main.sps; fi
-	@if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -I libs -A other_libs main.scm; fi
+	@if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main main.sps; fi
+	@if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main main.scm; fi
 	@cd .tmp && ./main
 
 test-docker:
-	docker build --build-arg SCHEME=${SCHEME} -f Dockerfile.test --tag=${SCHEME}-testing .
+	docker build --build-arg IMAGE=${IMAGE} --build-arg SCHEME=${SCHEME} -f Dockerfile.test --tag=${SCHEME}-testing .
 	docker run ${SCHEME}-testing sh -c "make SCHEME=${SCHEME} RNRS=${RNRS} test"
 
 

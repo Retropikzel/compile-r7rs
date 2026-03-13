@@ -56,6 +56,7 @@ prefix="#!/usr/bin/env -S"
 case $rnrs in
     R6RS)
         case $COMPILE_R7RS in
+            capyscheme) printf "\n#|\nexec capy --r6rs $prepend_dirs $append_dirs --script \$0\n|#\n" >> "$output_file";;
             chezscheme) echo "$prefix scheme --libdirs $prepend_dirs:$append_dirs --program" >> "$output_file";;
             guile) printf "$prefix guile --r6rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
             ikarus) echo "$prefix IKARUS_LIBRARY_PATH=$prepend_dirs:$append_dirs ikarus --r6rs-script" >> "$output_file";;
@@ -71,6 +72,7 @@ case $rnrs in
         esac;;
     R7RS)
         case $COMPILE_R7RS in
+            capyscheme) printf "\n#|\nexec capy --r7rs $prepend_dirs $append_dirs --script \$0\n|#\n" >> "$output_file";;
             chicken) csc -o "$output_file" "$input_file";;
             chibi) echo "$prefix chibi-scheme $prepend_dirs $append_dirs" >> "$output_file";;
             cyclone) cyclone -o "$output_file" $prepend_dirs $append_dirs "$input_file";;

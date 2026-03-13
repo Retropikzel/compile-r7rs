@@ -1,5 +1,6 @@
 ARG SCHEME=chibi
-FROM docker.io/schemers/${SCHEME}
+ARG IMAGE=chibi:latest
+FROM docker.io/schemers/${IMAGE}
 ARG SCHEME=chibi
 ENV COMPILE_R7RS=${SCHEME}
 RUN apt-get update && apt-get install -y make
