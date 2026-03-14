@@ -62,7 +62,7 @@ case $rnrs in
             ikarus) echo "$prefix IKARUS_LIBRARY_PATH=$prepend_dirs:$append_dirs ikarus --r6rs-script" >> "$output_file";;
             ironscheme) echo "$prefix ironscheme $prepend_dirs $append_dirs" >> "$output_file";;
             larceny) printf "\n#|\nexec larceny -r6rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" >> "$output_file";;
-            loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko -std=r6rs --compile "$input_file";
+            loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko --compile "$input_file";
                   if [ ! "${input_file%.sps}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
             mosh) echo "$prefix MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh" >> "$output_file";;
             racket) printf "\n#|\nexec racket -I scheme/init -l r6rs/run.rkt $prepend_dirs $append_dirs \$0 --\n|#\n" >> "$output_file";;
