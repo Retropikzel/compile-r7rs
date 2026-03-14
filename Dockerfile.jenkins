@@ -1,2 +1,2 @@
 FROM alpine
-RUN apk add make docker
+RUN apk add make docker shellcheck

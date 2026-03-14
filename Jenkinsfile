@@ -19,6 +19,13 @@ pipeline {
     }
 
     stages {
+        stage('shellcheck') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh "shellcheck compile-r7rs"
+                }
+            }
+        }
         stage('Test R6RS') {
             steps {
                 script {
