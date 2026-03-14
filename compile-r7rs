@@ -79,7 +79,7 @@ case $rnrs in
             foment) echo "$prefix foment $prepend_dirs $append_dirs -A /usr/local/share/snow" >> "$output_file";;
             gauche) echo "$prefix gosh -r7 $prepend_dirs $append_dirs" >> "$output_file";;
             guile) printf "$prefix guile --r7rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
-            kawa) echo "$prefix kawa -J--enable-native-access=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld" >> "$output_file";;
+            kawa) printf "\n#|\nexec kawa -J--enable-native-access=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld -f \$0\n|#" >> "$output_file";;
             larceny) printf "\n#|\nexec larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" >> "$output_file";;
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko -std=r7rs --compile "$input_file";
                   if [ ! "${input_file%.scm}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
