@@ -90,7 +90,10 @@ case $rnrs in
             sagittarius) echo "$prefix sash -r7 $prepend_dirs $append_dirs" >> "$output_file";;
             skint) printf "\n#|\nexec skint $prepend_dirs $append_dirs --program \$0 \n|#\n" >> "$output_file";;
             stklos) echo "$prefix stklos $prepend_dirs $append_dirs" >> "$output_file";;
-            tr7) echo "$prefix TR7_LIB_PATH=$prepend_dirs:$append_dirs tr7i -1" >> "$output_file";;
+            tr7) case "$prepend_dirs:$append_dirs" in
+                ":") echo "$prefix tr7i -1" >> "$output_file";;
+                *) echo "$prefix TR7_LIB_PATH=$prepend_dirs:$append_dirs tr7i -1" >> "$output_file";;
+            esac;;
             ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" >> "$output_file";;
             *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
