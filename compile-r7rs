@@ -13,6 +13,7 @@ append_dirs=""
 while :; do
 case ${1:-} in
     *.sps) input_file="$1"; rnrs=R6RS; shift ;;
+    *.ss) input_file="$1"; rnrs=R6RS; shift ;;
     *.scm) input_file="$1"; rnrs=R7RS; shift ;;
     -o) output_file="$2"; shift; shift ;;
     -D) echo "Warning: -D not supported, so \"$1 $2\" is ignored"; shift; shift ;;
