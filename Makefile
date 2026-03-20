@@ -7,7 +7,7 @@ RNRS=r7rs
 all: build
 
 build:
-	echo "Nothing to do, run make install"
+	echo "Nothing to build, run make install"
 
 install:
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
