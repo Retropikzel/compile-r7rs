@@ -10,6 +10,7 @@ fi
 ## Parse arguments
 prepend_dirs=""
 append_dirs=""
+output_file=a.out
 while :; do
 case ${1:-} in
     *.sps) input_file="$1"; rnrs=R6RS; shift ;;
