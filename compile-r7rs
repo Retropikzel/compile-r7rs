@@ -3,7 +3,7 @@
 set -eu
 if [ "${COMPILE_R7RS:-}" = "" ]; then
     echo "COMPILE_R7RS not set, possible values:"
-    echo "capyscheme chezscheme chibi chicken cyclone foment gauche gambit guile ikarus ironscheme kawa larceny loko meevax mosh racket sagittarius skint stklos tr7 ypsilon"
+    echo "capyscheme chezscheme chibi chicken cyclone foment gauche gambit guile ikarus ironscheme kawa larceny loko meevax mit-scheme mosh racket sagittarius skint stklos tr7 ypsilon"
     exit 1
 fi
 
@@ -21,7 +21,7 @@ case ${1:-} in
             chicken) prepend_dirs="" ;;
             chezscheme|ikarus|loko|mosh|tr7) prepend_dirs="$prepend_dirs:$2" ;;
             capyscheme|guile|sagittarius) prepend_dirs="$prepend_dirs -L $2" ;;
-            gambit) prepend_dirs="$prepend_dirs $2/" ;;
+            gambit|mit-scheme) prepend_dirs="$prepend_dirs $2/" ;;
             kawa) prepend_dirs="$prepend_dirs:$2/*.sld";;
             racket) prepend_dirs="$prepend_dirs -S $2" ;;
             ypsilon) prepend_dirs="$prepend_dirs --sitelib=$2" ;;
@@ -31,7 +31,7 @@ case ${1:-} in
     -A) case $COMPILE_R7RS in
             chicken) append_dirs="" ;;
             chezscheme|ikarus|loko|mosh|tr7) append_dirs="$append_dirs:$2" ;;
-            gambit) append_dirs="$append_dirs $2/" ;;
+            gambit|mit-scheme) append_dirs="$append_dirs $2/" ;;
             guile) append_dirs="$append_dirs -L $2" ;;
             ironscheme) append_dirs="$append_dirs -I $2" ;;
             kawa) append_dirs="$append_dirs:$2/*.sld";;
@@ -59,51 +59,58 @@ prefix="#!/usr/bin/env -S"
 case $rnrs in
     R6RS)
         case $COMPILE_R7RS in
-            capyscheme) printf "\n#|\nexec capy --r6rs $prepend_dirs $append_dirs --script \$0\n|#\n" >> "$output_file";;
-            chezscheme) echo "$prefix scheme --libdirs $prepend_dirs:$append_dirs --program" >> "$output_file";;
-            guile) printf "$prefix guile --r6rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
-            ikarus) echo "$prefix IKARUS_LIBRARY_PATH=$prepend_dirs:$append_dirs ikarus --r6rs-script" >> "$output_file";;
-            ironscheme) echo "$prefix ironscheme $prepend_dirs $append_dirs" >> "$output_file";;
-            larceny) printf "\n#|\nexec larceny -r6rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" >> "$output_file";;
+            capyscheme) printf "\n#|\nexec capy --r6rs $prepend_dirs $append_dirs --script \$0\n|#\n" > "$output_file";;
+            chezscheme) echo "$prefix scheme --libdirs $prepend_dirs:$append_dirs --program" > "$output_file";;
+            guile) printf "$prefix guile --r6rs $prepend_dirs $append_dirs\n!#\n" > "$output_file";;
+            ikarus) echo "$prefix IKARUS_LIBRARY_PATH=$prepend_dirs:$append_dirs ikarus --r6rs-script" > "$output_file";;
+            ironscheme) echo "$prefix ironscheme $prepend_dirs $append_dirs" > "$output_file";;
+            larceny) printf "\n#|\nexec larceny -r6rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" > "$output_file";;
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko --compile "$input_file";
                   if [ ! "${input_file%.sps}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
-            mosh) echo "$prefix MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh" >> "$output_file";;
-            racket) printf "\n#|\nexec racket -I scheme/init -l r6rs/run.rkt $prepend_dirs $append_dirs \$0 --\n|#\n" >> "$output_file";;
-            sagittarius) echo "$prefix sash -r6 $prepend_dirs $append_dirs" >> "$output_file";;
-            ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" >> "$output_file";;
+            mosh) echo "$prefix MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh" > "$output_file";;
+            racket) printf "\n#|\nexec racket -I scheme/init -l r6rs/run.rkt $prepend_dirs $append_dirs \$0 --\n|#\n" > "$output_file";;
+            sagittarius) echo "$prefix sash -r6 $prepend_dirs $append_dirs" > "$output_file";;
+            ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" > "$output_file";;
             *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
     R7RS)
         case $COMPILE_R7RS in
-            capyscheme) printf "\n#|\nexec capy --r7rs $prepend_dirs $append_dirs --script \$0\n|#\n" >> "$output_file";;
+            capyscheme) printf "\n#|\nexec capy --r7rs $prepend_dirs $append_dirs --script \$0\n|#\n" > "$output_file";;
             chicken) csc -o "$output_file" "$input_file";;
-            chibi) echo "$prefix chibi-scheme $prepend_dirs $append_dirs" >> "$output_file";;
+            chibi) echo "$prefix chibi-scheme $prepend_dirs $append_dirs" > "$output_file";;
             cyclone) cyclone -o "$output_file" $prepend_dirs $append_dirs "$input_file";;
-            foment) echo "$prefix foment $prepend_dirs $append_dirs -A /usr/local/share/snow" >> "$output_file";;
-            gauche) echo "$prefix gosh -r7 $prepend_dirs $append_dirs" >> "$output_file";;
-            gambit) echo "$prefix gsi -:r7rs $prepend_dirs $append_dirs" >> "$output_file";;
-            guile) printf "$prefix guile --r7rs $prepend_dirs $append_dirs\n!#\n" >> "$output_file";;
-            kawa) printf "\n#|\nexec kawa -J--enable-native-access=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld -f \$0\n|#" >> "$output_file";;
-            larceny) printf "\n#|\nexec larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" >> "$output_file";;
+            foment) echo "$prefix foment $prepend_dirs $append_dirs -A /usr/local/share/snow" > "$output_file";;
+            gauche) echo "$prefix gosh -r7 $prepend_dirs $append_dirs" > "$output_file";;
+            gambit) echo "$prefix gsi -:r7rs $prepend_dirs $append_dirs" > "$output_file";;
+            guile) printf "$prefix guile --r7rs $prepend_dirs $append_dirs\n!#\n" > "$output_file";;
+            kawa) printf "\n#|\nexec kawa -J--enable-native-access=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld -f \$0\n|#" > "$output_file";;
+            larceny) printf "\n#|\nexec larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" > "$output_file";;
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko -std=r7rs --compile "$input_file";
                   if [ ! "${input_file%.scm}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
-            meevax) echo "$prefix meevax $prepend_dirs $append_dirs" >> "$output_file";;
-            mosh) echo "$prefix MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh" >> "$output_file";;
-            racket) echo "$prefix racket -I r7rs $prepend_dirs $append_dirs --script" >> "$output_file";;
-            sagittarius) echo "$prefix sash -r7 $prepend_dirs $append_dirs" >> "$output_file";;
-            skint) printf "\n#|\nexec skint $prepend_dirs $append_dirs --program \$0 \n|#\n" >> "$output_file";;
-            stklos) echo "$prefix stklos $prepend_dirs $append_dirs" >> "$output_file";;
+            meevax) echo "$prefix meevax $prepend_dirs $append_dirs" > "$output_file";;
+            mit-scheme) {
+                printf "\n#|\n"
+                echo 'libs=""'
+                echo "for dir in $prepend_dirs $append_dirs; do libs=\"\$libs \$(find \$dir -name *.sld -printf \"--load %p \")\"; done"
+                echo "exec mit-scheme --batch-mode \$libs --load \$0 --eval \"(exit 0)\" -- \"$@\""
+                echo "|#"
+                } > "$output_file";;
+            mosh) echo "$prefix MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh" > "$output_file";;
+            racket) echo "$prefix racket -I r7rs $prepend_dirs $append_dirs --script" > "$output_file";;
+            sagittarius) echo "$prefix sash -r7 $prepend_dirs $append_dirs" > "$output_file";;
+            skint) printf "\n#|\nexec skint $prepend_dirs $append_dirs --program \$0 \n|#\n" > "$output_file";;
+            stklos) echo "$prefix stklos $prepend_dirs $append_dirs" > "$output_file";;
             tr7) case "$prepend_dirs:$append_dirs" in
-                ":") echo "$prefix tr7i -1" >> "$output_file";;
-                *) echo "$prefix TR7_LIB_PATH=$prepend_dirs:$append_dirs tr7i -1" >> "$output_file";;
+                ":") echo "$prefix tr7i -1" > "$output_file";;
+                *) echo "$prefix TR7_LIB_PATH=$prepend_dirs:$append_dirs tr7i -1" > "$output_file";;
             esac;;
-            ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" >> "$output_file";;
+            ypsilon) echo "$prefix ypsilon $prepend_dirs $append_dirs --top-level-program" > "$output_file";;
             *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
 esac
 
 case $COMPILE_R7RS in
     chicken|cyclone|loko) sleep 0;;
-    *) cat "$input_file" >> "$output_file";;
+    *) cat "$input_file" >> "$output_file"; echo "" >> "$output_file";;
 esac
 chmod +x "$output_file"
