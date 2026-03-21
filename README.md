@@ -8,7 +8,7 @@ made with POSIX Shell.
     COMPILE_R7RS=${SCHEME} compile-r7rs -o main -I libs -A other_libs main.scm
     ./main
 
-## Suppoerted implementations
+## Supported implementations
 - capyscheme
 - chezscheme
 - chibi
