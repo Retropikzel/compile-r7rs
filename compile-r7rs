@@ -3,7 +3,7 @@
 set -eu
 if [ "${COMPILE_R7RS:-}" = "" ]; then
     echo "COMPILE_R7RS not set, possible values:"
-    echo "capyscheme chezscheme chibi chicken cyclone foment gauche gambit guile ikarus ironscheme kawa larceny loko meevax mit-scheme mosh racket sagittarius skint stklos tr7 ypsilon"
+    echo "capyscheme chezscheme chibi chicken cyclone foment gauche gambit goldfish guile ikarus ironscheme kawa larceny loko meevax mit-scheme mosh racket sagittarius skint stklos tr7 ypsilon"
     exit 1
 fi
 
@@ -22,6 +22,7 @@ case ${1:-} in
             chezscheme|ikarus|loko|mosh|tr7) prepend_dirs="$prepend_dirs:$2" ;;
             capyscheme|guile|sagittarius) prepend_dirs="$prepend_dirs -L $2" ;;
             gambit|mit-scheme) prepend_dirs="$prepend_dirs $2/" ;;
+            goldfish) echo "Warning: Goldfish does not have way to add to loadpath, -I $2 ignored" ;;
             kawa) prepend_dirs="$prepend_dirs:$2/*.sld";;
             racket) prepend_dirs="$prepend_dirs -S $2" ;;
             ypsilon) prepend_dirs="$prepend_dirs --sitelib=$2" ;;
@@ -32,6 +33,7 @@ case ${1:-} in
             chicken) append_dirs="" ;;
             chezscheme|ikarus|loko|mosh|tr7) append_dirs="$append_dirs:$2" ;;
             gambit|mit-scheme) append_dirs="$append_dirs $2/" ;;
+            goldfish) echo "Warning: Goldfish does not have way to add to loadpath, -A $2 ignored" ;;
             guile) append_dirs="$append_dirs -L $2" ;;
             ironscheme) append_dirs="$append_dirs -I $2" ;;
             kawa) append_dirs="$append_dirs:$2/*.sld";;
@@ -82,6 +84,7 @@ case $rnrs in
             foment) echo "$prefix foment $prepend_dirs $append_dirs -A /usr/local/share/snow" > "$output_file";;
             gauche) echo "$prefix gosh -r7 $prepend_dirs $append_dirs" > "$output_file";;
             gambit) echo "$prefix gsi -:r7rs $prepend_dirs $append_dirs" > "$output_file";;
+            goldfish) printf "\n#|\nexec goldfish --mode r7rs \$0\n|#\n" > "$output_file";;
             guile) printf "$prefix guile --r7rs $prepend_dirs $append_dirs\n!#\n" > "$output_file";;
             kawa) printf "\n#|\nexec kawa -J--enable-native-access=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:/usr/local/share/kawa/lib/*.sld -f \$0\n|#" > "$output_file";;
             larceny) printf "\n#|\nexec larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \$0 --\n|#\n" > "$output_file";;
