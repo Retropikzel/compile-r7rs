@@ -38,6 +38,9 @@ test:
 	if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -A libs main.sps; fi
 	if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -A libs main.scm; fi
 	cd .tmp && ./main
+	if [ "${RNRS}" = "r6rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -I libs -A libs main.sps; fi
+	if [ "${RNRS}" = "r7rs" ]; then cd .tmp && COMPILE_R7RS=${SCHEME} sh ../compile-r7rs -o main -I libs -A libs main.scm; fi
+	cd .tmp && ./main
 
 test-docker:
 	docker build --build-arg IMAGE=${IMAGE} --build-arg SCHEME=${SCHEME} -f Dockerfile.test --tag=${SCHEME}-testing .
