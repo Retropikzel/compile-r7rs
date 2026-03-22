@@ -1,7 +1,8 @@
 .SILENT: test
 PREFIX=/usr/local
 SCHEME=chibi
-IMAGE=${SCHEME}:latest
+DOCKER_TAG=latest
+IMAGE=${SCHEME}:${DOCKER_TAG}
 RNRS=r7rs
 
 all: build
