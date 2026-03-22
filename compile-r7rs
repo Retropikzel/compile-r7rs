@@ -52,12 +52,6 @@ append_dirs="${append_dirs#:}"
 prepend_dirs="${prepend_dirs#,}"
 append_dirs="${append_dirs#,}"
 
-case ${input_file:-} in
-    *.sps) output_file="${input_file%.sps}";;
-    *.scm) output_file="${input_file%.scm}";;
-    *) echo "Error, invalid input file"; exit 1;;
-esac
-
 prefix="#!/usr/bin/env -S"
 case $rnrs in
     R6RS)
