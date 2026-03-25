@@ -52,50 +52,54 @@ append_dirs="${append_dirs#:}"
 prepend_dirs="${prepend_dirs#,}"
 append_dirs="${append_dirs#,}"
 
+if [ "$input_file" = "" ]; then
+    echo "Please give input file of either .sps or .scm as argument"
+    exit 1
+fi
 case $rnrs in
     R6RS)
         case $COMPILE_R7RS in
-            capyscheme) cmd="exec capy --r6rs $prepend_dirs $append_dirs --script \"\$0\" \"\$@"\";;
-            chezscheme) cmd="exec scheme --libdirs $prepend_dirs:$append_dirs --program \"\$0\" \"\$@\"";;
+            capyscheme) cmd="capy --r6rs $prepend_dirs $append_dirs --script \"\$tmpfile\"";;
+            chezscheme) cmd="scheme --libdirs $prepend_dirs:$append_dirs --program \"\$tmpfile\"";;
             guile) cmd="exec guile --r6rs $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            ikarus) cmd="IKARUS_LIBRARY_PATH=$prepend_dirs:$append_dirs exec ikarus --r6rs-script \"\$0\" \"$@\"";;
-            ironscheme) cmd="exec ironscheme $prepend_dirs $append_dirs \"\$0\" \"$@\"";;
-            larceny) cmd="exec larceny -r6rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \"\$0\" -- \"\$@\"";;
+            ikarus) cmd="IKARUS_LIBRARY_PATH=$prepend_dirs:$append_dirs ikarus --r6rs-script \"\$tmpfile\"";;
+            ironscheme) cmd="ironscheme $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            larceny) cmd="larceny -r6rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \"\$tmpfile\"";;
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko --compile "$input_file";
                   if [ ! "${input_file%.sps}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
-            mosh) cmd="MOSH_LOADPATH=$prepend_dirs:$append_dirs exec mosh \"\$0\" \"\$@\"";;
-            racket) cmd="exec racket -I scheme/init -l r6rs/run.rkt $prepend_dirs $append_dirs \"\$0\" -- \"\$@\"";;
-            sagittarius) cmd="exec sash -r6 $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            ypsilon) cmd="exec ypsilon $prepend_dirs $append_dirs --top-level-program \"\$0\" \"\$@\"";;
+            mosh) cmd="MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh \"\$tmpfile\"";;
+            racket) cmd="racket -I scheme/init -l r6rs/run.rkt $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            sagittarius) cmd="sash -r6 $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            ypsilon) cmd="ypsilon $prepend_dirs $append_dirs --top-level-program \"\$tmpfile\"";;
             *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
     R7RS)
         case $COMPILE_R7RS in
-            capyscheme) cmd="exec capy --r7rs $prepend_dirs $append_dirs --script \"\$0\" \"\$@"\";;
+            capyscheme) cmd="capy --r7rs $prepend_dirs $append_dirs --script \"\$tmpfile\"";;
             chicken) csc -o "$output_file" "$input_file";;
-            chibi) cmd="exec chibi-scheme $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
+            chibi) cmd="chibi-scheme $prepend_dirs $append_dirs \"\$tmpfile\"";;
             cyclone) cyclone -o "$output_file" $prepend_dirs $append_dirs "$input_file";;
-            foment) cmd="exec foment $prepend_dirs $append_dirs -A /usr/local/share/snow \"\$0\" \"\$@\"";;
-            gauche) cmd="exec gosh -r7 $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            gambit) cmd="exec gsi -:r7rs $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            goldfish) cmd="exec goldfish --mode r7rs \"\$0\" \"\$@\"";;
+            foment) cmd="foment $prepend_dirs $append_dirs -A /usr/local/share/snow \"\$tmpfile\"";;
+            gauche) cmd="gosh -r7 $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            gambit) cmd="gsi -:r7rs $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            goldfish) cmd="goldfish --mode r7rs \"\$tmpfile\"";;
             guile) cmd="exec guile --r7rs $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            kawa) cmd="classpath=\$(kawa -e '(display (get-environment-variable \"CLASSPATH\"))')\nCLASSPATH=\${classpath%%kawa.jar} exec kawa -J--enable-native-access=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:\${classpath%%kawa.jar}/*.sld -f \"\$0\" \"\$@\"";;
-            larceny) cmd="exec larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \"\$0\" -- \"\$@\"";;
+            kawa) cmd="classpath=\$(kawa -e '(display (get-environment-variable \"CLASSPATH\"))')\nCLASSPATH=\${classpath%%kawa.jar} exec kawa -J--enable-native-access=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.layout=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign.abi=ALL-UNNAMED -J--add-exports=java.base/jdk.internal.foreign=ALL-UNNAMED --r7rs --full-tailcalls -Dkawa.import.path=$prepend_dirs:$append_dirs:\${classpath%%kawa.jar}/*.sld --script1";;
+            larceny) cmd="larceny -r7rs -utf8 -quiet -nobanner $prepend_dirs $append_dirs -program \"\$tmpfile\"";;
             loko) LOKO_LIBRARY_PATH="$prepend_dirs:$append_dirs" loko -std=r7rs --compile "$input_file";
                   if [ ! "${input_file%.scm}" = "$output_file" ]; then mv -f "${input_file%.sps}" "$output_file"; fi;;
-            meevax) cmd="exec meevax $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            mit-scheme) cmd="libs=\nfor dir in $prepend_dirs $append_dirs; do libs=\"\$libs \$(find \$dir -name *.sld -printf \"--load %%p \")\"; done; exec mit-scheme --batch-mode \$libs --load \$0 --eval \"(exit 0)\" -- \"$@\"";;
-            mosh) cmd="MOSH_LOADPATH=$prepend_dirs:$append_dirs exec mosh \"\$0\" \"\$@\"";;
-            racket) cmd="exec racket -I r7rs $prepend_dirs $append_dirs --script \"\$0\" \"\$@\"";;
-            sagittarius) cmd="exec sash -r7 $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
-            skint) cmd="exec skint $prepend_dirs $append_dirs --program \"\$0\" \"\$@\"";;
-            stklos) cmd="exec stklos $prepend_dirs $append_dirs \"\$0\" \"\$@\"";;
+            meevax) cmd="meevax $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            mit-scheme) cmd="mit-scheme --batch-mode --load \"\$tmpfile\" --eval \"(exit 0)\"";;
+            mosh) cmd="MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh \"\$tmpfile\"";;
+            racket) cmd="racket -I r7rs $prepend_dirs $append_dirs --script \"\$tmpfile\"";;
+            sagittarius) cmd="sash -r7 $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            skint) cmd="skint $prepend_dirs $append_dirs --program \"\$tmpfile\"";;
+            stklos) cmd="stklos $prepend_dirs $append_dirs \"\$tmpfile\"";;
             tr7) case "$prepend_dirs:$append_dirs" in
-                ":") cmd="exec tr7i -1 \"\$0\" \"\$@\"";;
-                *) cmd="TR7_LIB_PATH=$prepend_dirs:$append_dirs exec tr7i -1 \"\$0\" \"$@\"";;
+                ":") cmd="tr7i -1 \"\$tmpfile\"";;
+                *) cmd="TR7_LIB_PATH=$prepend_dirs:$append_dirs tr7i -1 \"\$tmpfile\"";;
             esac;;
-            ypsilon) cmd="exec ypsilon $prepend_dirs $append_dirs --top-level-program \"\$0\" \"\$@\"";;
+            ypsilon) cmd="ypsilon $prepend_dirs $append_dirs --top-level-program \"\$tmpfile\"";;
             *) echo "Unsupported implementation RNRS combination: $COMPILE_R7RS $rnrs"; exit 1;;
         esac;;
 esac
@@ -103,9 +107,34 @@ esac
 
 case $COMPILE_R7RS in
     chicken|cyclone|loko) sleep 0;;
+    guile)
+        {
+            echo "#!/bin/sh"
+            printf "$cmd\n"
+            echo "!#"
+            cat "$input_file"
+        } > "$output_file"
+        ;;
+    kawa)
+        {
+            echo "#!/bin/sh"
+            echo "#|"
+            printf "$cmd"
+            echo ' "$0" "$@"'
+            echo "|#"
+            cat "$input_file"
+        } > "$output_file"
+        ;;
     *)
-        printf "\n#|\n$cmd\n|#\n" > "$output_file"
-        cat "$input_file" >> "$output_file"; echo "" >> "$output_file"
+        {
+            echo "#!/bin/sh"
+            echo "tmpfile=\$(mktemp)"
+            echo "tail \"\$0\" -n +7 > \$tmpfile"
+            echo "$cmd"
+            echo "rm -f \$tmpfile"
+            echo "exit 0"
+            cat "$input_file"
+        } > "$output_file"
      ;;
 esac
 chmod +x "$output_file"
