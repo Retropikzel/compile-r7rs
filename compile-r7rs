@@ -76,7 +76,7 @@ case $rnrs in
     R7RS)
         case $COMPILE_R7RS in
             capyscheme) cmd="capy --r7rs $prepend_dirs $append_dirs --script \"\$tmpfile\"";;
-            chicken) csc -o "$output_file" "$input_file";;
+            chicken) csc -R r7rs -X r7rs -o "$output_file" "$input_file";;
             chibi) cmd="chibi-scheme $prepend_dirs $append_dirs \"\$tmpfile\"";;
             cyclone) cyclone -o "$output_file" $prepend_dirs $append_dirs "$input_file";;
             foment) cmd="foment $prepend_dirs $append_dirs -A /usr/local/share/snow \"\$tmpfile\"";;
