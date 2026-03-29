@@ -92,7 +92,7 @@ case $rnrs in
             mit-scheme) cmd="mit-scheme --batch-mode --load \"\$tmpfile\" --eval \"(exit 0)\"";;
             mosh) cmd="MOSH_LOADPATH=$prepend_dirs:$append_dirs mosh \"\$tmpfile\"";;
             racket) cmd="racket -I r7rs $prepend_dirs $append_dirs --script \"\$tmpfile\"";;
-            sagittarius) cmd="sash -r7 $prepend_dirs $append_dirs \"\$tmpfile\"";;
+            sagittarius) cmd="exec sash -r7 $prepend_dirs $append_dirs";;
             skint) cmd="skint $prepend_dirs $append_dirs --program \"\$tmpfile\"";;
             stklos) cmd="stklos $prepend_dirs $append_dirs \"\$tmpfile\"";;
             tr7) case "$prepend_dirs:$append_dirs" in
@@ -116,6 +116,16 @@ case $COMPILE_R7RS in
         } > "$output_file"
         ;;
     kawa)
+        {
+            echo "#!/bin/sh"
+            echo "#|"
+            printf "$cmd"
+            echo ' "$0" "$@"'
+            echo "|#"
+            cat "$input_file"
+        } > "$output_file"
+        ;;
+    sagittarius)
         {
             echo "#!/bin/sh"
             echo "#|"
