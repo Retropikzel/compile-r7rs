@@ -19,6 +19,9 @@ build:
 install:
 	install compile-r7rs ${PREFIX}/bin/compile-r7rs
 
+uninstall:
+	rm -rf ${PREFIX}/bin/compile-r7rs
+
 test:
 	# Misc
 	rm -rf .tmp
